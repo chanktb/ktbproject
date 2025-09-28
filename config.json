@@ -514,6 +514,14 @@
                 "mockup_sets_to_use": ["whatwillwear"],
                 "coords": { "x": 624, "y": 859, "w": 742, "h": 793 }
             }
+        ],
+        "wildfoxtee.com": [
+            {
+                "pattern": "-hoodie.jpg",
+                "action": "generate",
+                "mockup_sets_to_use": ["whatwillwear"],
+                "coords": { "x": 326, "y": 502, "w": 310, "h": 393 }
+            }
         ]
     }
 }
