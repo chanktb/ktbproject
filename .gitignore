@@ -1,0 +1,19 @@
+# Môi trường Python
+**/__pycache__/
+*.pyc
+*.pyo
+*.pyd
+*build/
+*dist/
+*venv/
+*env/
+
+# File biến môi trường
+.env
+
+**/InputImage/
+**/OutputImage/
+**/TotalImage.txt
+
+*.zip
+generate.log
