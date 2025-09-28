@@ -178,6 +178,10 @@ def main():
         processed_by_mockup = {}
         skipped_global_count, skipped_no_rule_count, skipped_by_rule_count = 0, 0, 0
 
+        # <<< THÊM MỚI: BIẾN ĐẾM LỖI VÀ NGƯỠNG LỖI >>>
+        consecutive_error_count = 0
+        ERROR_THRESHOLD = 5 # Dừng lại nếu có 5 lỗi tải ảnh liên tiếp
+
         for url in urls_to_process:
             filename = os.path.basename(url)
             print(f"\n--- Đang xử lý: {filename} ---")
@@ -196,7 +200,19 @@ def main():
 
             try:
                 img = download_image(url)
-                if not img: skipped_urls_for_domain.append(url); continue
+                if not img:
+                    skipped_urls_for_domain.append(url)
+                    consecutive_error_count += 1 # Tăng biến đếm lỗi
+                    
+                    # KIỂM TRA NẾU VƯỢT NGƯỠNG
+                    if consecutive_error_count >= ERROR_THRESHOLD:
+                        print(f"  - ❌ Lỗi: Đã có {consecutive_error_count} lỗi tải ảnh liên tiếp. Bỏ qua các URL còn lại của domain {domain}.")
+                        break # Thoát khỏi vòng lặp của domain này
+                    
+                    continue # Chuyển sang URL tiếp theo
+                
+                # Nếu tải thành công, reset biến đếm lỗi về 0
+                consecutive_error_count = 0
                 
                 sample_coords = matched_rule.get("color_sample_coords")
                 angle = matched_rule.get("angle", 0)

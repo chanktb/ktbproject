@@ -72,10 +72,25 @@ def pre_clean_filename(base_filename, regex_pattern):
 
 
 def clean_title(title, keywords):
-    """Dọn dẹp tiêu đề file dựa trên keywords."""
+    """
+    Dọn dẹp tiêu đề file dựa trên keywords, xử lý được cả tên file
+    dùng gạch ngang (-) và gạch dưới (_).
+    """
+    # BƯỚC 1: Chuẩn hóa chuỗi đầu vào -> thay thế cả '_' và '-' bằng dấu cách
+    normalized_title = title.replace('_', ' ').replace('-', ' ')
+    
+    # BƯỚC 2: Xây dựng pattern để tìm và xóa keywords (logic này vẫn hiệu quả)
+    # Nó sẽ tìm các keywords như "t shirt", "t-shirt"...
     cleaned_keywords = sorted([r'(?:-|\s)?'.join([re.escape(p) for p in re.split(r'[- ]', k.strip())]) for k in keywords], key=len, reverse=True)
     pattern = r'\b(' + '|'.join(cleaned_keywords) + r')\b'
-    return re.sub(r'\s+', ' ', re.sub(pattern, '', title, flags=re.IGNORECASE).replace('-', ' ')).strip()
+
+    # BƯỚC 3: Xóa các keywords trên chuỗi ĐÃ ĐƯỢC CHUẨN HÓA
+    cleaned_str = re.sub(pattern, '', normalized_title, flags=re.IGNORECASE)
+    
+    # BƯỚC 4: Dọn dẹp các dấu cách thừa và trả về kết quả cuối cùng
+    final_title = re.sub(r'\s+', ' ', cleaned_str).strip()
+    
+    return final_title
 
 def should_globally_skip(filename, skip_keywords):
     """Kiểm tra filename có chứa từ khóa skip toàn cục không."""
