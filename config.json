@@ -535,7 +535,7 @@
         "digitalhandmades.com": [
             {
                 "pattern": "-Shirt.webp",
-                "action": "skip",
+                "action": "generate",
                 "mockup_sets_to_use": ["whatwillwear"],
                 "coords": { "x": 385, "y": 234, "w": 490, "h": 627 }
             }
