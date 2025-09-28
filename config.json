@@ -505,6 +505,15 @@
 				"coords_black": { "x": 95, "y": 204, "w": 318, "h": 392 },
 				"color_sample_coords": { "x": 89, "y": 162, "w": 42, "h": 25 }
             }
+        ],
+        "picturestees.com": [
+            {
+                "pattern": "",
+                "action": "generate",
+                "pre_clean_regex": "_[a-zA-Z0-9]+_[0-9]+$",
+                "mockup_sets_to_use": ["whatwillwear"],
+                "coords": { "x": 624, "y": 859, "w": 742, "h": 793 }
+            }
         ]
     }
 }

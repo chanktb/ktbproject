@@ -27,6 +27,7 @@ from utils.image_processing import (
 from utils.file_io import (
     load_config,
     clean_title,
+    pre_clean_filename,
     should_globally_skip,
     _convert_to_gps,
     create_exif_data,
@@ -249,7 +250,16 @@ def main():
                     watermark_desc = mockup_config.get("watermark_text")
                     final_mockup_with_wm = add_watermark(final_mockup, watermark_desc, WATERMARK_DIR, FONT_FILE)
 
+                    # --- LOGIC TẠO TÊN FILE (ĐÃ CẬP NHẬT) ---
                     base_filename = os.path.splitext(filename)[0]
+
+                    # BƯỚC PHỤ: TIỀN XỬ LÝ TÊN FILE NẾU CÓ REGEX
+                    pre_clean_pattern = matched_rule.get("pre_clean_regex")
+                    if pre_clean_pattern:
+                        print(f"  - Áp dụng pre_clean_regex: '{pre_clean_pattern}'")
+                        base_filename = pre_clean_filename(base_filename, pre_clean_pattern)
+
+                    # BƯỚC CHÍNH: DỌN DẸP TÊN FILE BẰNG KEYWORDS
                     cleaned_title = clean_title(base_filename, title_clean_keywords)
                     prefix = mockup_config.get("title_prefix_to_add", "")
                     suffix = mockup_config.get("title_suffix_to_add", "")

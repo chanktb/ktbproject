@@ -57,6 +57,19 @@ def update_total_image_count(filepath, new_counts): # <--- Nhận vào filepath
 
 
 # --- CÁC HÀM XỬ LÝ METADATA VÀ TEXT ---
+def pre_clean_filename(base_filename, regex_pattern):
+    """
+    Tiền xử lý tên file bằng một biểu thức chính quy (regex)
+    được định nghĩa trong config.
+    """
+    if not regex_pattern:
+        return base_filename
+    try:
+        return re.sub(regex_pattern, '', base_filename)
+    except re.error as e:
+        print(f"  - ⚠️ Cảnh báo: Lỗi biểu thức chính quy trong pre_clean_regex: {e}")
+        return base_filename
+
 
 def clean_title(title, keywords):
     """Dọn dẹp tiêu đề file dựa trên keywords."""
