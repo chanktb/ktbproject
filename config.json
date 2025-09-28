@@ -521,7 +521,7 @@
                 "pattern": "-hoodie.jpg",
                 "action": "generate",
                 "mockup_sets_to_use": ["ktbtee"],
-                "coords": { "x": 326, "y": 502, "w": 310, "h": 393 }
+                "coords": { "x": 315, "y": 467, "w": 331, "h": 428 }
             }
         ],
         "limotees.com": [
