@@ -304,9 +304,10 @@ def main():
     update_total_image_count(TOTAL_IMAGE_FILE, total_processed_this_run)
     print("\n✅ Hoàn thành tạo file zip và log.")
 
-    if commit_and_push_changes_locally():
-        send_telegram_log_locally()
-    #send_telegram_log_locally()
+    #if commit_and_push_changes_locally():
+    #    send_telegram_log_locally()
+    commit_and_push_changes_locally()
+    send_telegram_log_locally()
     print("\n🎉 Quy trình đã hoàn tất! 🎉")
 
 if __name__ == "__main__":
