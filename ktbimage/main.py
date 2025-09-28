@@ -182,7 +182,9 @@ def main():
             print(f"\n--- Đang xử lý: {filename} ---")
             
             if should_globally_skip(filename, global_skip_keywords):
-                skipped_urls_for_domain.append(url); skipped_global_count += 1; continue
+                skipped_global_count += 1  # Chỉ tăng bộ đếm, không thêm url vào danh sách skip
+                print(f"  - ⏩ Bỏ qua (Global): '{filename}' khớp với từ khóa skip toàn cục.")
+                continue
             
             matched_rule = next((r for r in domain_rules if r.get("pattern", "") in filename), None)
             
