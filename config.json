@@ -522,6 +522,12 @@
                 "action": "generate",
                 "mockup_sets_to_use": ["ktbtee"],
                 "coords": { "x": 315, "y": 467, "w": 331, "h": 428 }
+            },
+			{
+                "pattern": "-hoodie.webp",
+                "action": "generate",
+                "mockup_sets_to_use": ["ktbtee"],
+                "coords": { "x": 315, "y": 467, "w": 331, "h": 428 }
             }
         ],
         "limotees.com": [
