@@ -357,6 +357,12 @@
                 "action": "generate",
                 "mockup_sets_to_use": ["albumcoverprint"],
                 "coords": { "x": 405, "y": 150, "w": 311, "h": 401 }
+            },
+			{
+                "pattern": "-mug.jpg",
+                "action": "generate",
+                "mockup_sets_to_use": ["ktbtee"],
+                "coords": { "x": 315, "y": 176, "w": 329, "h": 393 }
             }
         ],
         "lovingsquad.com": [
