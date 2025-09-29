@@ -3,7 +3,10 @@ from PIL import Image, ImageDraw, ImageFont
 from io import BytesIO
 import requests
 import os
-from urllib.parse import quote  # <<< THÊM DÒNG NÀY
+from urllib.parse import quote
+import cv2
+import numpy as np
+
 # --- CÁC HÀM XỬ LÝ ẢNH CỐT LÕI ---
 
 def download_image(url):
@@ -110,6 +113,78 @@ def remove_background(design_img):
                 visited.add((x, y))
                 stack.extend([(x + 1, y), (x - 1, y), (x, y + 1), (x, y - 1)])
     return design_img
+
+def remove_background_advanced(design_img, tolerance=30, refine_size=8000):
+    """
+    Hàm tách nền cao cấp, kết hợp 3 kỹ thuật từ ktbrembg:
+    1. Tách nền Magic Wand lấy mẫu 4 góc.
+    2. Tinh chỉnh viền kiểu vector.
+    3. Làm nét ảnh.
+    """
+    print("✨ Áp dụng thuật toán tách nền cao cấp...")
+    try:
+        # --- Chuyển đổi từ PIL sang OpenCV ---
+        img_cv = cv2.cvtColor(np.array(design_img), cv2.COLOR_RGBA2BGRA)
+
+        # --- Bước 1: Tách nền bằng Magic Wand toàn cục ---
+        bgr_image = img_cv[:,:,:3]
+        h, w = bgr_image.shape[:2]
+
+        sample_size = min(10, h // 10, w // 10)
+        corners = [
+            bgr_image[0:sample_size, 0:sample_size],
+            bgr_image[0:sample_size, w-sample_size:w],
+            bgr_image[h-sample_size:h, 0:sample_size],
+            bgr_image[h-sample_size:h, w-sample_size:w]
+        ]
+        corner_colors = [np.mean(corner, axis=(0, 1)) for corner in corners]
+        
+        combined_mask = np.zeros((h, w), np.uint8)
+        for color in corner_colors:
+            
+            # <<< SỬA LỖI: Thêm dtype=np.uint8 để ép kiểu dữ liệu về số nguyên 8-bit >>>
+            lower = np.array([max(0, c - tolerance) for c in color], dtype=np.uint8)
+            upper = np.array([min(255, c + tolerance) for c in color], dtype=np.uint8)
+            
+            mask = cv2.inRange(bgr_image, lower, upper)
+            combined_mask = cv2.bitwise_or(combined_mask, mask)
+
+        foreground_mask = cv2.bitwise_not(combined_mask)
+        print("   - Tách nền 4 góc thành công.")
+
+        # --- Bước 2: Tinh chỉnh viền sắc nét ---
+        # (Phần này giữ nguyên)
+        scale_factor = max(1, int(refine_size / max(h, w, 1)))
+        if scale_factor > 1:
+            h_up, w_up = h * scale_factor, w * scale_factor
+            upscaled_mask = cv2.resize(foreground_mask, (w_up, h_up), interpolation=cv2.INTER_CUBIC)
+            _, binary_mask = cv2.threshold(upscaled_mask, 127, 255, cv2.THRESH_BINARY)
+            contours, _ = cv2.findContours(binary_mask, cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)
+            perfect_mask = np.zeros((h_up, w_up), dtype=np.uint8)
+            cv2.drawContours(perfect_mask, contours, -1, (255), thickness=cv2.FILLED)
+            refined_mask = cv2.resize(perfect_mask, (w, h), interpolation=cv2.INTER_AREA)
+            _, refined_mask = cv2.threshold(refined_mask, 127, 255, cv2.THRESH_BINARY)
+            print("   - Tinh chỉnh viền thành công.")
+        else:
+            refined_mask = foreground_mask
+
+        # --- Bước 3: Áp dụng mặt nạ và làm nét ---
+        # (Phần này giữ nguyên)
+        bgra_image = cv2.cvtColor(bgr_image, cv2.COLOR_BGR2BGRA)
+        bgra_image[:, :, 3] = refined_mask
+        bgr_part = bgra_image[:, :, :3]
+        alpha_part = bgra_image[:, :, 3]
+        blurred = cv2.GaussianBlur(bgr_part, (0, 0), 3)
+        sharpened_bgr = cv2.addWeighted(bgr_part, 1.5, blurred, -0.5, 0)
+        final_cv_image = cv2.merge([sharpened_bgr, alpha_part])
+        print("   - Làm nét ảnh thành công.")
+
+        # --- Chuyển đổi ngược lại sang PIL để trả về ---
+        return Image.fromarray(cv2.cvtColor(final_cv_image, cv2.COLOR_BGRA2RGBA))
+
+    except Exception as e:
+        print(f"  - ❌ Lỗi trong quá trình xử lý ảnh nâng cao: {e}")
+        return design_img
 
 def trim_transparent_background(image):
     """Cắt bỏ toàn bộ phần nền trong suốt thừa xung quanh vật thể."""

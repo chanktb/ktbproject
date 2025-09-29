@@ -14,6 +14,7 @@ from utils.image_processing import (
     crop_by_coords,
     rotate_image,
     remove_background,
+    remove_background_advanced,
     trim_transparent_background,
     apply_mockup,
     add_watermark
@@ -171,7 +172,11 @@ def main():
                 if (skip_white and is_white) or (skip_black and not is_white):
                     print(f"  - ⏩ Bỏ qua theo tùy chọn skip màu."); continue
                     
+                # Cách 1: Dùng hàm cũ, nhanh hơn, chất lượng tiêu chuẩn
                 bg_removed = remove_background(initial_crop)
+
+                # Cách 2: Dùng hàm mới, chậm hơn, chất lượng vượt trội
+                #bg_removed = remove_background_advanced(initial_crop)
 
                 # 3. XOAY ẢNH (THEO GÓC NGƯỜI DÙNG NHẬP)
                 final_design = rotate_image(bg_removed, angle)
