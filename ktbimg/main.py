@@ -173,10 +173,10 @@ def main():
                     print(f"  - ⏩ Bỏ qua theo tùy chọn skip màu."); continue
                     
                 # Cách 1: Dùng hàm cũ, nhanh hơn, chất lượng tiêu chuẩn
-                bg_removed = remove_background(initial_crop)
+                #bg_removed = remove_background(initial_crop)
 
                 # Cách 2: Dùng hàm mới, chậm hơn, chất lượng vượt trội
-                #bg_removed = remove_background_advanced(initial_crop)
+                bg_removed = remove_background_advanced(initial_crop)
 
                 # 3. XOAY ẢNH (THEO GÓC NGƯỜI DÙNG NHẬP)
                 final_design = rotate_image(bg_removed, angle)

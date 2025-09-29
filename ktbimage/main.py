@@ -246,10 +246,10 @@ def main():
                     print("  - ⏩ Bỏ qua theo quy tắc skip màu."); skipped_urls_for_domain.append(url); skipped_by_rule_count += 1; continue
                 
                 # Cách 1: Dùng hàm cũ, nhanh hơn, chất lượng tiêu chuẩn
-                bg_removed = remove_background(initial_crop)
+                #bg_removed = remove_background(initial_crop)
 
                 # Cách 2: Dùng hàm mới, chậm hơn, chất lượng vượt trội
-                #bg_removed = remove_background_advanced(initial_crop)
+                bg_removed = remove_background_advanced(initial_crop)
                 final_design = rotate_image(bg_removed, angle)
                 trimmed_img = trim_transparent_background(final_design)
                 if not trimmed_img:
