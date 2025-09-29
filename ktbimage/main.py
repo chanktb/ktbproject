@@ -16,6 +16,7 @@ from PIL import Image
 # Import các hàm từ module dùng chung
 from utils.image_processing import (
     download_image,
+    erase_areas,
     crop_by_coords,
     rotate_image,
     remove_background,
@@ -214,7 +215,12 @@ def main():
                 
                 # Nếu tải thành công, reset biến đếm lỗi về 0
                 consecutive_error_count = 0
-                
+                # <<< BƯỚC MỚI: XÓA WATERMARK CŨ TRÊN ẢNH GỐC >>>
+                erase_zones = matched_rule.get("erase_zones")
+                if erase_zones:
+                    print("  - Tẩy watermark cũ trên ảnh gốc...")
+                    img = erase_areas(img, erase_zones)
+                # <<< KẾT THÚC BƯỚC MỚI >>>
                 sample_coords = matched_rule.get("color_sample_coords")
                 angle = matched_rule.get("angle", 0)
                 is_white = True

@@ -359,7 +359,8 @@
                 "mockup_sets_to_use": ["albumcoverprint"],
 				"coords_white": { "x": 310, "y": 482, "w": 339, "h": 408 },
 				"coords_black": { "x": 326, "y": 564, "w": 332, "h": 410 },
-				"color_sample_coords": { "x": 295, "y": 491, "w": 34, "h": 25 }
+				"erase_zones": [{ "x": 87, "y": 550, "w": 239, "h": 96 }],
+				"color_sample_coords": { "x": 635, "y": 435, "w": 42, "h": 34 }
             },
 			{
                 "pattern": "-mug.jpg",

@@ -11,6 +11,7 @@ from dotenv import load_dotenv
 # Import các hàm từ module dùng chung
 from utils.image_processing import (
     download_image,
+    erase_areas,
     crop_by_coords,
     rotate_image,
     remove_background,
@@ -67,6 +68,22 @@ def get_user_inputs(available_mockups):
         except (json.JSONDecodeError, TypeError):
             print("Lỗi: Định dạng tọa độ không hợp lệ.")
 
+    # HỎI TỌA ĐỘ CẦN TẨY >>>
+    erase_zones = []
+    while True:
+        try:
+            erase_str = input('▶️ Dán tọa độ vùng cần TẨY, cách nhau bởi dấu phẩy (Enter để bỏ qua): ')
+            if not erase_str.strip():
+                break # Người dùng không nhập gì, bỏ qua
+            
+            # Bọc chuỗi trong cặp ngoặc vuông để tạo thành một JSON array hợp lệ
+            json_array_str = f"[{erase_str}]"
+            erase_zones = json.loads(json_array_str)
+            print(f"✅ Đã nhận {len(erase_zones)} vùng cần tẩy.")
+            break
+        except json.JSONDecodeError:
+            print("Lỗi: Định dạng tọa độ không hợp lệ. Vui lòng dán lại.")
+
     # Hỏi góc xoay
     while True:
         try:
@@ -101,7 +118,7 @@ def get_user_inputs(available_mockups):
             print("Lỗi: Vui lòng chỉ nhập các số hợp lệ.")
 
     print("-" * 50)
-    return pattern, crop_coords, angle, skip_white, skip_black, selected_mockups
+    return pattern, crop_coords, angle, skip_white, skip_black, selected_mockups, erase_zones
 
 # --- HÀM MAIN CHÍNH ---
 def main():
@@ -138,7 +155,7 @@ def main():
             print("  - ⚠️  File txt trống, bỏ qua."); continue
 
         # Hỏi người dùng MỘT LẦN cho mỗi file .txt
-        pattern, crop_coords, angle, skip_white, skip_black, selected_mockups = get_user_inputs(mockup_sets_config)
+        pattern, crop_coords, angle, skip_white, skip_black, selected_mockups, erase_zones = get_user_inputs(mockup_sets_config)
         
         # Lọc URL theo pattern
         urls_to_process = [url for url in all_urls if not pattern or pattern in os.path.basename(url)]
@@ -158,6 +175,10 @@ def main():
                 if not img: continue
                 
                 # --- QUY TRÌNH XỬ LÝ ẢNH CHUẨN ---
+                # <<< THAY ĐỔI: Tẩy watermark NẾU có tọa độ >>>
+                if erase_zones:
+                    print("  - Tẩy watermark theo tọa độ đã nhập...")
+                    img = erase_areas(img, erase_zones)
                 # 1. CẮT ẢNH GỐC THEO TỌA ĐỘ NGƯỜI DÙNG NHẬP
                 initial_crop = crop_by_coords(img, crop_coords)
                 if not initial_crop: continue

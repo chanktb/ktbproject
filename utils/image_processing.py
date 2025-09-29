@@ -19,6 +19,36 @@ def download_image(url):
         print(f"Lỗi khi tải ảnh từ {url}: {e}")
         return None
 
+def erase_areas(image_pil, zones):
+    """
+    Nhận vào một ảnh PIL và một danh sách các vùng tọa độ {x, y, w, h}.
+    Làm cho các vùng đó trở nên trong suốt.
+    """
+    if not zones or not isinstance(zones, list):
+        return image_pil
+
+    # Đảm bảo ảnh ở chế độ RGBA để có thể xử lý kênh trong suốt
+    img_rgba = image_pil.copy().convert("RGBA")
+    
+    # Tạo một "cục tẩy" trong suốt
+    eraser = Image.new('RGBA', (1, 1), (0, 0, 0, 0))
+
+    for zone in zones:
+        try:
+            x, y, w, h = zone['x'], zone['y'], zone['w'], zone['h']
+            
+            # Thay đổi kích thước cục tẩy cho vừa vùng cần xóa
+            zone_eraser = eraser.resize((w, h))
+            
+            # Dán "cục tẩy" trong suốt đè lên ảnh
+            img_rgba.paste(zone_eraser, (x, y))
+            
+        except (KeyError, TypeError):
+            print(f"  - ⚠️ Cảnh báo: Cấu trúc zone không hợp lệ, bỏ qua: {zone}")
+            continue
+            
+    return img_rgba
+
 def crop_by_coords(image, coords_dict):
     """Chỉ cắt một vùng chữ nhật từ ảnh dựa trên tọa độ {x, y, w, h}."""
     try:
