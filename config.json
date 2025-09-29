@@ -440,7 +440,7 @@
                 "pattern": "-sweater.webp",
                 "action": "generate",
                 "mockup_sets_to_use": ["ktbtee"],
-                "coords": { "x": 329, "y": 214, "w": 338, "h": 415 },
+                "coords": { "x": 319, "y": 214, "w": 370, "h": 405 },
 				"skipWhite": true
             },
 			{
