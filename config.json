@@ -441,6 +441,7 @@
                 "action": "generate",
                 "mockup_sets_to_use": ["ktbtee"],
                 "coords": { "x": 319, "y": 214, "w": 370, "h": 405 },
+				"angle": -3,
 				"skipWhite": true
             },
 			{
@@ -548,7 +549,7 @@
         ],
         "newsfashionshirt.com": [
             {
-                "pattern": "-Shirt.webp",
+                "pattern": "-Sweatshirt.jpg",
                 "action": "generate",
                 "mockup_sets_to_use": ["whatwillwear"],
 				"coords_white": { "x": 164, "y": 86, "w": 470, "h": 563 },
