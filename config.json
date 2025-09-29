@@ -463,7 +463,7 @@
         "serenashirt.com": [
             {
                 "pattern": "-sweater.jpg",
-                "action": "generate",
+                "action": "skip",
                 "mockup_sets_to_use": ["albumcoverprint"],
                 "coords": { "x": 145, "y": 159, "w": 422, "h": 579 }
             },
