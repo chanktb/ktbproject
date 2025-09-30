@@ -132,15 +132,19 @@ def write_log(urls_summary):
 
 # --- HÀM MAIN CHÍNH ---
 def main():
-    print("🚀 Bắt đầu quy trình tự động của KTB-IMAGE...")
-    if not os.path.exists(OUTPUT_DIR): os.makedirs(OUTPUT_DIR)
-    
-    cleanup_old_zips()
-
     configs = load_config(CONFIG_FILE)
     if not configs: return
     
     defaults = configs.get("defaults", {})
+    output_mode = defaults.get("ktbimage_output_mode", "zip")
+    
+    print(f"🚀 Bắt đầu quy trình tự động của KTB-IMAGE (Chế độ Output: {output_mode.upper()})")
+
+    if not os.path.exists(OUTPUT_DIR): os.makedirs(OUTPUT_DIR)
+    
+    if output_mode == 'zip':
+        cleanup_old_zips()
+
     domains_configs = configs.get("domains", {})
     mockup_sets_config = configs.get("mockup_sets", {})
     exif_defaults = defaults.get("exif_defaults", {})
@@ -161,7 +165,7 @@ def main():
     print(f"🔎 Tìm thấy {len(domains_to_process)} domain có ảnh mới.")
     urls_summary = {}
     total_processed_this_run = {}
-    images_for_zip = {}
+    images_for_output = {}
 
     for domain, new_count in domains_to_process.items():
         print(f"\n==================== Bắt đầu xử lý {new_count} ảnh mới từ domain: {domain} ====================")
@@ -179,19 +183,14 @@ def main():
         skipped_urls_for_domain = []
         processed_by_mockup = {}
         skipped_global_count, skipped_no_rule_count, skipped_by_rule_count = 0, 0, 0
-
-        # <<< THÊM MỚI: BIẾN ĐẾM LỖI VÀ NGƯỠNG LỖI >>>
-        consecutive_error_count = 0
-        ERROR_THRESHOLD = 5 # Dừng lại nếu có 5 lỗi tải ảnh liên tiếp
+        consecutive_error_count, ERROR_THRESHOLD = 0, 5
 
         for url in urls_to_process:
             filename = os.path.basename(url)
             print(f"\n--- Đang xử lý: {filename} ---")
             
             if should_globally_skip(filename, global_skip_keywords):
-                skipped_global_count += 1  # Chỉ tăng bộ đếm, không thêm url vào danh sách skip
-                print(f"  - ⏩ Bỏ qua (Global): '{filename}' khớp với từ khóa skip toàn cục.")
-                continue
+                skipped_urls_for_domain.append(url); skipped_global_count += 1; continue
             
             matched_rule = next((r for r in domain_rules if r.get("pattern", "") in filename), None)
             
@@ -203,24 +202,18 @@ def main():
             try:
                 img = download_image(url)
                 if not img:
-                    skipped_urls_for_domain.append(url)
-                    consecutive_error_count += 1 # Tăng biến đếm lỗi
-                    
-                    # KIỂM TRA NẾU VƯỢT NGƯỠNG
+                    skipped_urls_for_domain.append(url); consecutive_error_count += 1
                     if consecutive_error_count >= ERROR_THRESHOLD:
                         print(f"  - ❌ Lỗi: Đã có {consecutive_error_count} lỗi tải ảnh liên tiếp. Bỏ qua các URL còn lại của domain {domain}.")
-                        break # Thoát khỏi vòng lặp của domain này
-                    
-                    continue # Chuyển sang URL tiếp theo
-                
-                # Nếu tải thành công, reset biến đếm lỗi về 0
+                        break
+                    continue
                 consecutive_error_count = 0
-                # <<< BƯỚC MỚI: XÓA WATERMARK CŨ TRÊN ẢNH GỐC >>>
+                
                 erase_zones = matched_rule.get("erase_zones")
                 if erase_zones:
                     print("  - Tẩy watermark cũ trên ảnh gốc...")
                     img = erase_areas(img, erase_zones)
-                # <<< KẾT THÚC BƯỚC MỚI >>>
+                
                 sample_coords = matched_rule.get("color_sample_coords")
                 angle = matched_rule.get("angle", 0)
                 is_white = True
@@ -240,7 +233,7 @@ def main():
                 if not initial_crop:
                     skipped_urls_for_domain.append(url); continue
 
-                if not sample_coords: # Fallback logic
+                if not sample_coords:
                     try:
                         pixel = initial_crop.getpixel((1, initial_crop.height - 2))
                         is_white = sum(pixel[:3]) / 3 > 128
@@ -251,11 +244,10 @@ def main():
                 if (matched_rule.get("skipWhite") and is_white) or (matched_rule.get("skipBlack") and not is_white):
                     print("  - ⏩ Bỏ qua theo quy tắc skip màu."); skipped_urls_for_domain.append(url); skipped_by_rule_count += 1; continue
                 
-                # Cách 1: Dùng hàm cũ, nhanh hơn, chất lượng tiêu chuẩn
-                #bg_removed = remove_background(initial_crop)
+                # CHỌN PHƯƠNG PHÁP TÁCH NỀN (comment/uncomment để chọn)
+                # bg_removed = remove_background(initial_crop) # Nhanh
+                bg_removed = remove_background_advanced(initial_crop) # Đẹp, chậm
 
-                # Cách 2: Dùng hàm mới, chậm hơn, chất lượng vượt trội
-                bg_removed = remove_background_advanced(initial_crop)
                 final_design = rotate_image(bg_removed, angle)
                 trimmed_img = trim_transparent_background(final_design)
                 if not trimmed_img:
@@ -272,21 +264,17 @@ def main():
                     mockup_path = find_mockup_image(MOCKUP_DIR, mockup_name, "white" if is_white else "black")
                     if not mockup_path: print(f"  - ⚠️ Cảnh báo: Không tìm thấy file ảnh mockup cho '{mockup_name}'."); continue
                     
-                    mockup_img = Image.open(mockup_path)
-                    final_mockup = apply_mockup(trimmed_img, mockup_img, mockup_config.get("coords"))
-                    watermark_desc = mockup_config.get("watermark_text")
-                    final_mockup_with_wm = add_watermark(final_mockup, watermark_desc, WATERMARK_DIR, FONT_FILE)
+                    with Image.open(mockup_path) as mockup_img:
+                        final_mockup = apply_mockup(trimmed_img, mockup_img, mockup_config.get("coords"))
+                        watermark_desc = mockup_config.get("watermark_text")
+                        final_mockup_with_wm = add_watermark(final_mockup, watermark_desc, WATERMARK_DIR, FONT_FILE)
 
-                    # --- LOGIC TẠO TÊN FILE (ĐÃ CẬP NHẬT) ---
                     base_filename = os.path.splitext(filename)[0]
-
-                    # BƯỚC PHỤ: TIỀN XỬ LÝ TÊN FILE NẾU CÓ REGEX
                     pre_clean_pattern = matched_rule.get("pre_clean_regex")
                     if pre_clean_pattern:
                         print(f"  - Áp dụng pre_clean_regex: '{pre_clean_pattern}'")
                         base_filename = pre_clean_filename(base_filename, pre_clean_pattern)
-
-                    # BƯỚC CHÍNH: DỌN DẸP TÊN FILE BẰNG KEYWORDS
+                    
                     cleaned_title = clean_title(base_filename, title_clean_keywords)
                     prefix = mockup_config.get("title_prefix_to_add", "")
                     suffix = mockup_config.get("title_suffix_to_add", "")
@@ -300,7 +288,7 @@ def main():
                     img_byte_arr = BytesIO()
                     image_to_save.save(img_byte_arr, format=save_format, quality=90, exif=exif_bytes)
                     
-                    images_for_zip.setdefault(mockup_name, {}).setdefault(domain, []).append((final_filename, img_byte_arr.getvalue()))
+                    images_for_output.setdefault(mockup_name, {}).setdefault(domain, []).append((final_filename, img_byte_arr.getvalue()))
                     processed_by_mockup[mockup_name] = processed_by_mockup.get(mockup_name, 0) + 1
             
             except Exception as e:
@@ -327,26 +315,40 @@ def main():
         for mockup, count in processed_by_mockup.items():
             total_processed_this_run[mockup] = total_processed_this_run.get(mockup, 0) + count
 
-    if images_for_zip:
-        for mockup_name, domains_dict in images_for_zip.items():
-            for domain_name, image_list in domains_dict.items():
-                if not image_list: continue
-                now_vietnam = datetime.now(pytz.timezone('Asia/Ho_Chi_Minh'))
-                zip_filename = f"{mockup_name}.{domain_name.split('.')[0]}.{now_vietnam.strftime('%Y%m%d_%H%M%S')}.{len(image_list)}.zip"
-                zip_path = os.path.join(OUTPUT_DIR, zip_filename)
-                print(f"📦 Đang tạo file: {zip_path} với {len(image_list)} ảnh.")
-                with zipfile.ZipFile(zip_path, 'w') as zf:
+    if not images_for_output:
+        print("\nKhông có ảnh nào được xử lý để tạo output.")
+    else:
+        if output_mode == 'zip':
+            print("\n📦 Chế độ ZIP: Bắt đầu tạo các file .zip...")
+            for mockup_name, domains_dict in images_for_output.items():
+                for domain_name, image_list in domains_dict.items():
+                    if not image_list: continue
+                    now_vietnam = datetime.now(pytz.timezone('Asia/Ho_Chi_Minh'))
+                    zip_filename = f"{mockup_name}.{domain_name.split('.')[0]}.{now_vietnam.strftime('%Y%m%d_%H%M%S')}.{len(image_list)}.zip"
+                    zip_path = os.path.join(OUTPUT_DIR, zip_filename)
+                    print(f"  - Đang tạo file: {zip_path} với {len(image_list)} ảnh.")
+                    with zipfile.ZipFile(zip_path, 'w') as zf:
+                        for filename, data in image_list: zf.writestr(filename, data)
+        elif output_mode == 'folder':
+            print("\n📁 Chế độ FOLDER: Bắt đầu tạo các thư mục chứa ảnh...")
+            for mockup_name, domains_dict in images_for_output.items():
+                for domain_name, image_list in domains_dict.items():
+                    if not image_list: continue
+                    now_vietnam = datetime.now(pytz.timezone('Asia/Ho_Chi_Minh'))
+                    folder_name = f"{mockup_name}.{domain_name.split('.')[0]}.{now_vietnam.strftime('%Y%m%d_%H%M%S')}.{len(image_list)}"
+                    folder_path = os.path.join(OUTPUT_DIR, folder_name)
+                    os.makedirs(folder_path, exist_ok=True)
+                    print(f"  - Đang tạo thư mục và lưu {len(image_list)} ảnh vào: {folder_path}")
                     for filename, data in image_list:
-                        zf.writestr(filename, data)
+                        with open(os.path.join(folder_path, filename), 'wb') as f: f.write(data)
 
     write_log(urls_summary)
     update_total_image_count(TOTAL_IMAGE_FILE, total_processed_this_run)
-    print("\n✅ Hoàn thành tạo file zip và log.")
+    print("\n✅ Hoàn thành tạo output và log.")
 
-    #if commit_and_push_changes_locally():
-    #    send_telegram_log_locally()
-    commit_and_push_changes_locally()
-    send_telegram_log_locally()
+    if commit_and_push_changes_locally():
+        send_telegram_log_locally()
+
     print("\n🎉 Quy trình đã hoàn tất! 🎉")
 
 if __name__ == "__main__":

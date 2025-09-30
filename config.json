@@ -1,6 +1,7 @@
 {
     "defaults": {
         "global_output_format": "webp",
+		"ktbimage_output_mode": "folder",
         "exif_defaults": {
               "Make": "Canon",
               "Model": "Canon EOS R5",
