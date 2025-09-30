@@ -221,37 +221,50 @@ def main():
                     continue
                 consecutive_error_count = 0
                 
-                erase_zones = matched_rule.get("erase_zones")
-                if erase_zones:
-                    print("  - Tẩy watermark cũ trên ảnh gốc...")
-                    img = erase_areas(img, erase_zones)
+                # --- QUY TRÌNH SỬA LỖI ---
                 
+                # BƯỚC 1: XÁC ĐỊNH MÀU NỀN TRƯỚC TIÊN (LOGIC THÔNG MINH CÓ FALLBACK)
                 sample_coords = matched_rule.get("color_sample_coords")
-                angle = matched_rule.get("angle", 0)
-                is_white = True
+                is_white = True # Mặc định
                 
+                # Trường hợp 1: Dùng logic mới nếu có color_sample_coords
                 if sample_coords:
                     is_white = determine_color_from_sample_area(img, sample_coords)
-                    print(f"  - Màu áo (từ ảnh gốc) là: {'Trắng' if is_white else 'Đen'}")
-                    rect_coords = matched_rule.get("coords_white") if is_white else matched_rule.get("coords_black")
-                    if not rect_coords: rect_coords = matched_rule.get("coords")
+                # Trường hợp 2: Dùng logic fallback nếu không có
                 else:
-                    rect_coords = matched_rule.get("coords")
+                    rect_coords_for_color = matched_rule.get("coords")
+                    if rect_coords_for_color:
+                        temp_crop = crop_by_coords(img, rect_coords_for_color)
+                        if temp_crop:
+                            try:
+                                pixel = temp_crop.getpixel((1, temp_crop.height - 2))
+                                is_white = sum(pixel[:3]) / 3 > 128
+                            except IndexError:
+                                is_white = True # Mặc định là trắng nếu ảnh crop quá nhỏ
+                
+                background_color = (255, 255, 255) if is_white else (0, 0, 0)
+                print(f"  - Màu nền được xác định là: {'Trắng' if is_white else 'Đen'}")
+
+                # BƯỚC 2: TẨY WATERMARK (NẾU CÓ) BẰNG MÀU NỀN VỪA TÌM ĐƯỢC
+                erase_zones = matched_rule.get("erase_zones")
+                if erase_zones:
+                    print("  - Tẩy watermark bằng màu nền...")
+                    img = erase_areas(img, erase_zones, background_color)
+
+                # BƯỚC 3: CÁC BƯỚC XỬ LÝ CÒN LẠI NHƯ CŨ
+                # Chọn đúng bộ tọa độ dựa trên màu đã xác định
+                rect_coords = None
+                if is_white and "coords_white" in matched_rule: rect_coords = matched_rule["coords_white"]
+                elif not is_white and "coords_black" in matched_rule: rect_coords = matched_rule["coords_black"]
+                else: rect_coords = matched_rule.get("coords")
 
                 if not rect_coords:
                     print("  - ⏩ Bỏ qua: Không tìm thấy tọa độ phù hợp."); skipped_urls_for_domain.append(url); skipped_by_rule_count += 1; continue
                 
+                angle = matched_rule.get("angle", 0)
                 initial_crop = crop_by_coords(img, rect_coords)
                 if not initial_crop:
                     skipped_urls_for_domain.append(url); continue
-
-                if not sample_coords:
-                    try:
-                        pixel = initial_crop.getpixel((1, initial_crop.height - 2))
-                        is_white = sum(pixel[:3]) / 3 > 128
-                        print(f"  - Màu áo (từ ảnh crop) là: {'Trắng' if is_white else 'Đen'}")
-                    except IndexError:
-                        is_white = True
                 
                 if (matched_rule.get("skipWhite") and is_white) or (matched_rule.get("skipBlack") and not is_white):
                     print("  - ⏩ Bỏ qua theo quy tắc skip màu."); skipped_urls_for_domain.append(url); skipped_by_rule_count += 1; continue

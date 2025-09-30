@@ -173,36 +173,39 @@ def main():
             try:
                 img = download_image(url)
                 if not img: continue
+
+                # --- QUY TRÌNH SỬA LỖI ---
+
+                # BƯỚC 1: XÁC ĐỊNH MÀU NỀN TRƯỚC
+                # Dùng tọa độ crop mà người dùng đã nhập ở đầu để xác định màu
+                try:
+                    temp_crop_for_color = crop_by_coords(img, crop_coords)
+                    if temp_crop_for_color:
+                        pixel = temp_crop_for_color.getpixel((1, temp_crop_for_color.height - 2))
+                        is_white = sum(pixel[:3]) / 3 > 128
+                    else: # Nếu crop lỗi, mặc định là trắng
+                        is_white = True
+                except (TypeError, IndexError):
+                    is_white = True
                 
-                # --- QUY TRÌNH XỬ LÝ ẢNH CHUẨN ---
-                # <<< THAY ĐỔI: Tẩy watermark NẾU có tọa độ >>>
+                background_color = (255, 255, 255) if is_white else (0, 0, 0)
+                print(f"  - Màu nền được xác định là: {'Trắng' if is_white else 'Đen'}")
+
+                # BƯỚC 2: TẨY WATERMARK BẰNG MÀU NỀN VỪA TÌM ĐƯỢC
                 if erase_zones:
                     print("  - Tẩy watermark theo tọa độ đã nhập...")
-                    img = erase_areas(img, erase_zones)
-                # 1. CẮT ẢNH GỐC THEO TỌA ĐỘ NGƯỜI DÙNG NHẬP
+                    # Gọi hàm với đủ 3 tham số
+                    img = erase_areas(img, erase_zones, background_color)
+                
+                # BƯỚC 3: CÁC BƯỚC XỬ LÝ CÒN LẠI NHƯ CŨ
                 initial_crop = crop_by_coords(img, crop_coords)
                 if not initial_crop: continue
-
-                # 2. XÁC ĐỊNH MÀU & TÁCH NỀN
-                try:
-                    pixel = initial_crop.getpixel((1, initial_crop.height - 2))
-                    is_white = sum(pixel[:3]) / 3 > 128
-                except IndexError:
-                    is_white = True
                 
                 if (skip_white and is_white) or (skip_black and not is_white):
                     print(f"  - ⏩ Bỏ qua theo tùy chọn skip màu."); continue
                     
-                # Cách 1: Dùng hàm cũ, nhanh hơn, chất lượng tiêu chuẩn
-                #bg_removed = remove_background(initial_crop)
-
-                # Cách 2: Dùng hàm mới, chậm hơn, chất lượng vượt trội
-                bg_removed = remove_background_advanced(initial_crop)
-
-                # 3. XOAY ẢNH (THEO GÓC NGƯỜI DÙNG NHẬP)
+                bg_removed = remove_background_advanced(initial_crop) # hoặc remove_background_advanced
                 final_design = rotate_image(bg_removed, angle)
-                
-                # 4. CẮT GỌN NỀN THỪA LẦN CUỐI
                 trimmed_img = trim_transparent_background(final_design)
                 if not trimmed_img:
                     print("  - ⚠️ Cảnh báo: Ảnh trống sau khi xử lý."); continue
