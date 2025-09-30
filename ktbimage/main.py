@@ -212,7 +212,9 @@ def main():
             try:
                 img = download_image(url)
                 if not img:
-                    skipped_urls_for_domain.append(url); consecutive_error_count += 1
+                    skipped_urls_for_domain.append(url);
+                    consecutive_error_count += 1
+                    skipped_by_rule_count += 1
                     if consecutive_error_count >= ERROR_THRESHOLD:
                         print(f"  - ❌ Lỗi: Đã có {consecutive_error_count} lỗi tải ảnh liên tiếp. Bỏ qua các URL còn lại của domain {domain}.")
                         break
