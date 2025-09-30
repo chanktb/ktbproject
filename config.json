@@ -154,7 +154,7 @@
                 {
 					"pattern": "-long-sleeve.jpg",
 					"action": "generate",
-					"mockup_sets_to_use": ["ktbtee"],
+					"mockup_sets_to_use": ["printiment"],
 					"coords": { "x": 643, "y": 889, "w": 707, "h": 982 }
 				},
                 {
@@ -396,10 +396,13 @@
 					"color_sample_coords": { "x": 455, "y": 583, "w": 45, "h": 20 }
 				},
                 {
-					"pattern": "-abcabc.jpg",
+					"pattern": "-Longsleeve-Shirt.jpg",
 					"action": "generate",
 					"mockup_sets_to_use": ["printiment"],
-					"coords": { "x": 315, "y": 176, "w": 329, "h": 393 }
+					"coords_white": { "x": 292, "y": 479, "w": 377, "h": 503 },
+					"coords_black": { "x": 309, "y": 536, "w": 362, "h": 433 },
+					"erase_zones": [{ "x": 230, "y": 581, "w": 98, "h": 62 }],
+					"color_sample_coords": { "x": 604, "y": 440, "w": 42, "h": 25 }
 				},
                 {
 					"pattern": "-Shirt.jpg",
