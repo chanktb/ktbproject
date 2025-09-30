@@ -65,6 +65,7 @@ load_dotenv(dotenv_path=os.path.join(PROJECT_ROOT, '.env'))
 # --- CÁC HÀM HỖ TRỢ RIÊNG CỦA TOOL NÀY ---
 
 def cleanup_old_zips():
+    """Hàm này chỉ tìm và xóa các file có đuôi .zip"""
     if not os.path.exists(OUTPUT_DIR): return
     print("🧹 Bắt đầu dọn dẹp các file zip cũ...")
     for filename in os.listdir(OUTPUT_DIR):
@@ -130,20 +131,20 @@ def write_log(urls_summary):
     print(f"✅ Generation summary saved to {GENERATE_LOG_FILE}")
 
 
-# --- HÀM MAIN CHÍNH ---
+# --- HÀM MAIN CHÍNH (PHIÊN BẢN HOÀN CHỈNH CUỐI CÙNG) ---
 def main():
     configs = load_config(CONFIG_FILE)
     if not configs: return
     
     defaults = configs.get("defaults", {})
+    # <<< SỬA LỖI: Định nghĩa output_mode ở đây >>>
     output_mode = defaults.get("ktbimage_output_mode", "zip")
     
-    print(f"🚀 Bắt đầu quy trình tự động của KTB-IMAGE (Chế độ Output: {output_mode.upper()})")
+    print(f"🚀 Bắt đầu quy trình tự động của KTB-IMAGE (Chế độ Output mặc định: {output_mode.upper()})")
 
     if not os.path.exists(OUTPUT_DIR): os.makedirs(OUTPUT_DIR)
     
-    if output_mode == 'zip':
-        cleanup_old_zips()
+    cleanup_old_zips()
 
     domains_configs = configs.get("domains", {})
     mockup_sets_config = configs.get("mockup_sets", {})
@@ -165,10 +166,19 @@ def main():
     print(f"🔎 Tìm thấy {len(domains_to_process)} domain có ảnh mới.")
     urls_summary = {}
     total_processed_this_run = {}
-    images_for_output = {}
 
     for domain, new_count in domains_to_process.items():
         print(f"\n==================== Bắt đầu xử lý {new_count} ảnh mới từ domain: {domain} ====================")
+        
+        domain_config = domains_configs.get(domain, {})
+        # Lấy output_mode riêng của domain, nếu không có thì dùng output_mode chung
+        output_mode_domain = domain_config.get("output_mode", output_mode)
+        domain_rules = sorted(domain_config.get("rules", []), key=lambda x: len(x.get('pattern', '')), reverse=True)
+        
+        print(f"  - Chế độ output cho domain này: {output_mode_domain.upper()}")
+
+        if not domain_rules:
+            print(f"  - ⚠️ Cảnh báo: Không tìm thấy quy tắc ('rules') cho domain '{domain}'. Bỏ qua."); continue
         
         try:
             with open(os.path.join(CRAWLER_DOMAIN_DIR, f"{domain}.txt"), 'r', encoding='utf-8') as f:
@@ -176,10 +186,7 @@ def main():
         except FileNotFoundError:
             print(f"  - ❌ Lỗi: Không tìm thấy file URL cho domain {domain}. Bỏ qua."); continue
         
-        domain_rules = sorted(domains_configs.get(domain, []), key=lambda x: len(x.get('pattern', '')), reverse=True)
-        if not domain_rules:
-            print(f"  - ⚠️ Cảnh báo: Không tìm thấy quy tắc cho domain '{domain}'."); continue
-
+        images_for_domain = {}
         skipped_urls_for_domain = []
         processed_by_mockup = {}
         skipped_global_count, skipped_no_rule_count, skipped_by_rule_count = 0, 0, 0
@@ -189,8 +196,11 @@ def main():
             filename = os.path.basename(url)
             print(f"\n--- Đang xử lý: {filename} ---")
             
+            # --- LOGIC SKIP ĐÃ ĐƯỢC KIỂM TRA LẠI ---
             if should_globally_skip(filename, global_skip_keywords):
-                skipped_urls_for_domain.append(url); skipped_global_count += 1; continue
+                skipped_global_count += 1 
+                # Không thêm vào skipped_urls_for_domain theo đúng yêu cầu của bạn
+                continue
             
             matched_rule = next((r for r in domain_rules if r.get("pattern", "") in filename), None)
             
@@ -244,10 +254,7 @@ def main():
                 if (matched_rule.get("skipWhite") and is_white) or (matched_rule.get("skipBlack") and not is_white):
                     print("  - ⏩ Bỏ qua theo quy tắc skip màu."); skipped_urls_for_domain.append(url); skipped_by_rule_count += 1; continue
                 
-                # CHỌN PHƯƠNG PHÁP TÁCH NỀN (comment/uncomment để chọn)
-                # bg_removed = remove_background(initial_crop) # Nhanh
-                bg_removed = remove_background_advanced(initial_crop) # Đẹp, chậm
-
+                bg_removed = remove_background_advanced(initial_crop)
                 final_design = rotate_image(bg_removed, angle)
                 trimmed_img = trim_transparent_background(final_design)
                 if not trimmed_img:
@@ -288,7 +295,7 @@ def main():
                     img_byte_arr = BytesIO()
                     image_to_save.save(img_byte_arr, format=save_format, quality=90, exif=exif_bytes)
                     
-                    images_for_output.setdefault(mockup_name, {}).setdefault(domain, []).append((final_filename, img_byte_arr.getvalue()))
+                    images_for_domain.setdefault(mockup_name, []).append((final_filename, img_byte_arr.getvalue()))
                     processed_by_mockup[mockup_name] = processed_by_mockup.get(mockup_name, 0) + 1
             
             except Exception as e:
@@ -296,17 +303,37 @@ def main():
                 skipped_urls_for_domain.append(url)
                 skipped_by_rule_count += 1
 
+        # LƯU KẾT QUẢ CỦA DOMAIN
+        if images_for_domain:
+            if output_mode_domain == 'zip':
+                for mockup_name, image_list in images_for_domain.items():
+                    now = datetime.now(pytz.timezone('Asia/Ho_Chi_Minh'))
+                    zip_filename = f"{mockup_name}.{domain.split('.')[0]}.{now.strftime('%Y%m%d_%H%M%S')}.{len(image_list)}.zip"
+                    zip_path = os.path.join(OUTPUT_DIR, zip_filename)
+                    print(f"📦 Đang tạo file zip: {zip_path}")
+                    with zipfile.ZipFile(zip_path, 'w') as zf:
+                        for filename, data in image_list: zf.writestr(filename, data)
+            elif output_mode_domain == 'folder':
+                for mockup_name, image_list in images_for_domain.items():
+                    now = datetime.now(pytz.timezone('Asia/Ho_Chi_Minh'))
+                    folder_name = f"{mockup_name}.{domain.split('.')[0]}.{now.strftime('%Y%m%d_%H%M%S')}.{len(image_list)}"
+                    folder_path = os.path.join(OUTPUT_DIR, folder_name)
+                    os.makedirs(folder_path, exist_ok=True)
+                    print(f"📁 Đang tạo thư mục và lưu ảnh: {folder_path}")
+                    for filename, data in image_list:
+                        with open(os.path.join(folder_path, filename), 'wb') as f: f.write(data)
+
+        # GHI FILE SKIP
         skip_file_name = None
         if skipped_urls_for_domain:
             if not os.path.exists(KTBIMG_INPUT_DIR): os.makedirs(KTBIMG_INPUT_DIR)
             timestamp = datetime.now(pytz.timezone('Asia/Ho_Chi_Minh')).strftime('%Y%m%d%H%M%S')
-            total_skipped = len(skipped_urls_for_domain)
-            skip_file_name = f"{domain}.{total_skipped}.{timestamp}.txt"
-            skip_file_path = os.path.join(KTBIMG_INPUT_DIR, skip_file_name)
-            with open(skip_file_path, 'w', encoding='utf-8') as f:
+            skip_file_name = f"{domain}.{len(skipped_urls_for_domain)}.{timestamp}.txt"
+            with open(os.path.join(KTBIMG_INPUT_DIR, skip_file_name), 'w', encoding='utf-8') as f:
                 f.write('\n'.join(skipped_urls_for_domain))
             print(f"📝 Đã tạo file skip '{skip_file_name}' và đẩy vào Input của KTBIMG.")
-
+        
+        # CẬP NHẬT BÁO CÁO
         urls_summary[domain] = {
             'processed_by_mockup': processed_by_mockup, 'skipped_global': skipped_global_count,
             'skipped_no_rule': skipped_no_rule_count, 'skipped_by_rule': skipped_by_rule_count,
@@ -315,36 +342,10 @@ def main():
         for mockup, count in processed_by_mockup.items():
             total_processed_this_run[mockup] = total_processed_this_run.get(mockup, 0) + count
 
-    if not images_for_output:
-        print("\nKhông có ảnh nào được xử lý để tạo output.")
-    else:
-        if output_mode == 'zip':
-            print("\n📦 Chế độ ZIP: Bắt đầu tạo các file .zip...")
-            for mockup_name, domains_dict in images_for_output.items():
-                for domain_name, image_list in domains_dict.items():
-                    if not image_list: continue
-                    now_vietnam = datetime.now(pytz.timezone('Asia/Ho_Chi_Minh'))
-                    zip_filename = f"{mockup_name}.{domain_name.split('.')[0]}.{now_vietnam.strftime('%Y%m%d_%H%M%S')}.{len(image_list)}.zip"
-                    zip_path = os.path.join(OUTPUT_DIR, zip_filename)
-                    print(f"  - Đang tạo file: {zip_path} với {len(image_list)} ảnh.")
-                    with zipfile.ZipFile(zip_path, 'w') as zf:
-                        for filename, data in image_list: zf.writestr(filename, data)
-        elif output_mode == 'folder':
-            print("\n📁 Chế độ FOLDER: Bắt đầu tạo các thư mục chứa ảnh...")
-            for mockup_name, domains_dict in images_for_output.items():
-                for domain_name, image_list in domains_dict.items():
-                    if not image_list: continue
-                    now_vietnam = datetime.now(pytz.timezone('Asia/Ho_Chi_Minh'))
-                    folder_name = f"{mockup_name}.{domain_name.split('.')[0]}.{now_vietnam.strftime('%Y%m%d_%H%M%S')}.{len(image_list)}"
-                    folder_path = os.path.join(OUTPUT_DIR, folder_name)
-                    os.makedirs(folder_path, exist_ok=True)
-                    print(f"  - Đang tạo thư mục và lưu {len(image_list)} ảnh vào: {folder_path}")
-                    for filename, data in image_list:
-                        with open(os.path.join(folder_path, filename), 'wb') as f: f.write(data)
-
+    # CÁC BƯỚC CUỐI CÙNG
     write_log(urls_summary)
     update_total_image_count(TOTAL_IMAGE_FILE, total_processed_this_run)
-    print("\n✅ Hoàn thành tạo output và log.")
+    print("\n✅ Hoàn thành xử lý và ghi log.")
 
     if commit_and_push_changes_locally():
         send_telegram_log_locally()
