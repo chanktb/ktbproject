@@ -387,24 +387,24 @@
 			"output_mode": "folder",
             "rules": [
                 {
-					"pattern": "-abcacb.jpg",
-					"action": "generate",
-					"mockup_sets_to_use": ["albumcoverprint"],
-					"coords_white": { "x": 310, "y": 482, "w": 339, "h": 408 },
-					"coords_black": { "x": 326, "y": 564, "w": 332, "h": 410 },
-					"erase_zones": [{ "x": 87, "y": 550, "w": 239, "h": 96 }],
-					"color_sample_coords": { "x": 635, "y": 435, "w": 42, "h": 34 }
-				},
-                {
 					"pattern": "-mug.jpg",
 					"action": "generate",
-					"mockup_sets_to_use": ["ktbtee"],
+					"mockup_sets_to_use": ["printiment"],
+					"coords_white": { "x": 208, "y": 36, "w": 421, "h": 573 },
+					"coords_black": { "x": 315, "y": 176, "w": 329, "h": 393 },
+					"erase_zones": [{ "x": 185, "y": 381, "w": 39, "h": 87 }],
+					"color_sample_coords": { "x": 455, "y": 583, "w": 45, "h": 20 }
+				},
+                {
+					"pattern": "-abcabc.jpg",
+					"action": "generate",
+					"mockup_sets_to_use": ["printiment"],
 					"coords": { "x": 315, "y": 176, "w": 329, "h": 393 }
 				},
                 {
 					"pattern": "-Shirt.jpg",
 					"action": "generate",
-					"mockup_sets_to_use": ["ktbtee"],
+					"mockup_sets_to_use": ["printiment"],
 					"coords": { "x": 404, "y": 146, "w": 319, "h": 405 }
 				}
             ]
@@ -563,19 +563,20 @@
             ]
         },
         "teehandus.com": {
+			"output_mode": "folder",
             "rules": [
                 {
 					"pattern": "-Sweater.jpg",
 					"action": "generate",
-					"mockup_sets_to_use": ["albumcoverprint"],
-					"coords_white": { "x": 329, "y": 345, "w": 278, "h": 356 },
-					"coords_black": { "x": 316, "y": 233, "w": 349, "h": 470 },
-					"color_sample_coords": { "x": 388, "y": 748, "w": 51, "h": 25 }
+					"mockup_sets_to_use": ["printiment"],
+					"coords_white": { "x": 282, "y": 237, "w": 419, "h": 533 },
+					"coords_black": { "x": 282, "y": 237, "w": 419, "h": 533 },
+					"color_sample_coords": { "x": 468, "y": 193, "w": 76, "h": 36 }
 				},
                 {
 					"pattern": "-sweater.jpg",
 					"action": "generate",
-					"mockup_sets_to_use": ["albumcoverprint"],
+					"mockup_sets_to_use": ["printiment"],
 					"coords_white": { "x": 80, "y": 204, "w": 341, "h": 409 },
 					"coords_black": { "x": 95, "y": 204, "w": 318, "h": 392 },
 					"color_sample_coords": { "x": 89, "y": 162, "w": 42, "h": 25 }
@@ -640,6 +641,17 @@
 					"coords_white": { "x": 164, "y": 86, "w": 470, "h": 563 },
 					"coords_black": { "x": 226, "y": 132, "w": 359, "h": 459 },
 					"color_sample_coords": { "x": 247, "y": 65, "w": 41, "h": 13 }
+				}
+            ]
+        },
+        "greazytees.com": {
+			"output_mode": "folder",
+            "rules": [
+                {
+					"pattern": "",
+					"action": "generate",
+					"mockup_sets_to_use": ["printiment"],
+					"coords": { "x": 489, "y": 454, "w": 1029, "h": 1269 }
 				}
             ]
         }

@@ -349,8 +349,8 @@ def main():
     update_total_image_count(TOTAL_IMAGE_FILE, total_processed_this_run)
     print("\n✅ Hoàn thành xử lý và ghi log.")
 
-    if commit_and_push_changes_locally():
-        send_telegram_log_locally()
+    commit_and_push_changes_locally()
+    send_telegram_log_locally()
 
     print("\n🎉 Quy trình đã hoàn tất! 🎉")
 
