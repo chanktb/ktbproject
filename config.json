@@ -249,7 +249,15 @@
 					"pattern": "-T-shirt-Black.jpg",
 					"action": "generate",
 					"mockup_sets_to_use": ["amertee"],
-					"coords": { "x": 496, "y": 364, "w": 286, "h": 368 }
+					"coords": { "x": 490, "y": 347, "w": 291, "h": 397 },
+					"angle": 4
+				},
+				{
+					"pattern": "-T-shirt-White.jpg",
+					"action": "generate",
+					"mockup_sets_to_use": ["amertee"],
+					"coords": { "x": 468, "y": 301, "w": 300, "h": 399 },
+					"angle": 4
 				},
                 {
 					"pattern": "-Shirt.jpg",
@@ -507,7 +515,8 @@
 					"action": "generate",
 					"mockup_sets_to_use": ["ktbtee"],
 					"coords": { "x": 319, "y": 214, "w": 370, "h": 405 },
-					"angle": -3, "skipWhite": true
+					"angle": -3,
+					"skipWhite": true
 				},
                 {
 					"pattern": "-shirt.webp",
@@ -615,6 +624,7 @@
             ]
         },
         "limotees.com": {
+			"output_mode": "folder",
             "rules": [
                 {
 					"pattern": "-shirt0.jpg",
