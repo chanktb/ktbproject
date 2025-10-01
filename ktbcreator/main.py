@@ -158,7 +158,7 @@ def main():
                 # Các bước xử lý tiếp theo sẽ áp dụng trên `processed_img`
                 try:
                     pixel = processed_img.getpixel((1, processed_img.height - 2))
-                    is_white = sum(pixel[:3]) / 3 > 128
+                    is_white = sum(pixel[:3]) / 3 > 210
                 except IndexError:
                     is_white = True
                 
