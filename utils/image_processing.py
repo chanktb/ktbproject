@@ -1,11 +1,12 @@
 # utils/image_processing.py
-from PIL import Image, ImageDraw, ImageFont
+from PIL import Image, ImageDraw, ImageFont, ImageFilter
 from io import BytesIO
 import requests
 import os
 from urllib.parse import quote
 import cv2
 import numpy as np
+import random
 
 # --- CÁC HÀM XỬ LÝ ẢNH CỐT LÕI ---
 
@@ -307,3 +308,78 @@ def add_watermark(image_to_watermark, watermark_descriptor, watermark_dir, font_
         draw.text((text_x, text_y), watermark_descriptor, fill=(0, 0, 0, 128), font=font)
             
     return image_to_watermark
+
+def stylize_image(image_pil, posterize_level=4, feather_margin=0.15):
+    """
+    "Trừu tượng hóa" một bức ảnh bằng cách giảm màu và làm mờ viền.
+    - posterize_level: Càng thấp, màu càng ít và càng "trừu tượng".
+    - feather_margin: Tỷ lệ viền mờ (vd: 0.15 = 15% cạnh ngoài sẽ bị làm mờ).
+    """
+    # Bước 1: Posterize - Giảm số lượng màu
+    # Chuyển sang chế độ 'P' với số màu giới hạn, sau đó chuyển lại RGBA
+    posterized_img = image_pil.convert('P', palette=Image.ADAPTIVE, colors=2**posterize_level).convert('RGBA')
+
+    # Bước 2: Tạo mặt nạ để làm mờ viền (Feathered Edges)
+    width, height = posterized_img.size
+    mask = Image.new('L', (width, height), 0) # Tạo mask đen hoàn toàn
+    draw = ImageDraw.Draw(mask)
+
+    # Vẽ một hình chữ nhật trắng nhỏ hơn ở giữa
+    margin_w = int(width * feather_margin)
+    margin_h = int(height * feather_margin)
+    draw.rectangle(
+        (margin_w, margin_h, width - margin_w, height - margin_h),
+        fill=255
+    )
+
+    # Làm mờ mạnh cái mask để tạo ra gradient
+    mask = mask.filter(ImageFilter.GaussianBlur(radius=max(margin_w, margin_h) // 2))
+
+    # Áp dụng mask vào kênh alpha của ảnh
+    posterized_img.putalpha(mask)
+    
+    return posterized_img
+
+def add_hashtag_text(image_pil, filename, fonts_dir, text_margin=20):
+    """
+    Ghép text hashtag (#filename) vào bên dưới ảnh.
+    """
+    # 1. Chuẩn bị text và font
+    text_to_add = "#" + os.path.splitext(filename)[0].replace('-', ' ').replace('_', ' ')
+    
+    try:
+        font_files = [f for f in os.listdir(fonts_dir) if f.lower().endswith('.ttf')]
+        if not font_files:
+            raise FileNotFoundError("Không tìm thấy file font nào.")
+        random_font_path = os.path.join(fonts_dir, random.choice(font_files))
+        
+        # Tự động điều chỉnh kích thước font
+        font_size = max(40, int(image_pil.width / 10))
+        font = ImageFont.truetype(random_font_path, font_size)
+    except Exception as e:
+        print(f"  - ⚠️ Lỗi font: {e}. Dùng font mặc định.")
+        font = ImageFont.load_default()
+
+    # 2. Tính toán kích thước
+    draw = ImageDraw.Draw(image_pil) # Dùng tạm để tính toán
+    text_bbox = draw.textbbox((0, 0), text_to_add, font=font)
+    text_width = text_bbox[2] - text_bbox[0]
+    text_height = text_bbox[3] - text_bbox[1]
+    
+    # 3. Tạo canvas mới lớn hơn để chứa cả ảnh và text
+    new_height = image_pil.height + text_height + text_margin
+    new_width = max(image_pil.width, text_width)
+    final_canvas = Image.new('RGBA', (new_width, new_height), (0,0,0,0))
+    
+    # 4. Ghép ảnh và text vào canvas
+    # Dán ảnh vào trên
+    img_paste_x = (new_width - image_pil.width) // 2
+    final_canvas.paste(image_pil, (img_paste_x, 0), image_pil)
+    
+    # Vẽ text ở dưới
+    text_draw = ImageDraw.Draw(final_canvas)
+    text_paste_x = (new_width - text_width) // 2
+    text_paste_y = image_pil.height + text_margin
+    text_draw.text((text_paste_x, text_paste_y), text_to_add, font=font, fill=(0,0,0,255)) # Màu đen
+    
+    return final_canvas
