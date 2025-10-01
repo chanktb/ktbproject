@@ -631,6 +631,12 @@
 					"action": "generate",
 					"mockup_sets_to_use": ["printiment"],
 					"coords": { "x": 315, "y": 467, "w": 331, "h": 428 }
+				},
+                {
+					"pattern": "-Sweatshirt.webp",
+					"action": "generate",
+					"mockup_sets_to_use": ["printiment"],
+					"coords": { "x": 492, "y": 503, "w": 550, "h": 672 }
 				}
             ]
         },
