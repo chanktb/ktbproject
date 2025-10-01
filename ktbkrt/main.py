@@ -49,16 +49,24 @@ def get_krt_inputs(available_mockups):
     print("-" * 50)
     
     try:
-        level_str = input("▶️ Nhập mức độ giảm màu (Posterize) (1-8, Enter = 4): ")
-        posterize_level = int(level_str) if level_str else 4
+        level_str = input("▶️ Nhập mức độ giảm màu (Posterize) (1-8, Enter = 3): ")
+        posterize_level = int(level_str) if level_str else 3
     except ValueError:
-        posterize_level = 4
+        posterize_level = 3
 
+    # Sửa lại giá trị mặc định để bạn dễ nhập số nhỏ
     try:
-        feather_str = input("▶️ Nhập tỷ lệ làm mờ viền (0.0-0.5, Enter = 0.15): ")
-        feather_margin = float(feather_str) if feather_str else 0.15
+        feather_str = input("▶️ Nhập tỷ lệ làm mờ viền (0.01-0.5, Enter = 0.07): ")
+        feather_margin = float(feather_str) if feather_str else 0.07
     except ValueError:
-        feather_margin = 0.15
+        feather_margin = 0.07
+        
+    # <<< THÊM MỚI: HỎI VỀ ĐỘ SẮC NÉT CỦA VIỀN >>>
+    try:
+        blur_factor_str = input("▶️ Nhập độ sắc nét của viền (2-8, số càng LỚN viền càng NÉT, Enter = 6): ")
+        blur_factor = int(blur_factor_str) if blur_factor_str else 6
+    except ValueError:
+        blur_factor = 6
 
     text_choice = input("▶️ Bạn có muốn chèn text hashtag không? (Y/n): ")
     add_text = text_choice.lower() != 'n'
@@ -83,7 +91,7 @@ def get_krt_inputs(available_mockups):
             print("Lỗi: Vui lòng chỉ nhập các số hợp lệ.")
 
     print("-" * 50)
-    return posterize_level, feather_margin, add_text, selected_mockups
+    return posterize_level, feather_margin, blur_factor, add_text, selected_mockups
 
 def cleanup_input_directory(directory, processed_files_list):
     """Xóa các file đã xử lý trong thư mục Input."""
@@ -120,7 +128,7 @@ def main():
     if not images_to_process:
         print("✅ Không có ảnh mới trong InputImage để xử lý."); return
 
-    posterize_level, feather_margin, add_text, selected_mockups = get_krt_inputs(mockup_sets_config)
+    posterize_level, feather_margin, blur_factor, add_text, selected_mockups = get_krt_inputs(mockup_sets_config)
 
     print(f"🔎 Tìm thấy {len(images_to_process)} ảnh, sẽ áp dụng {len(selected_mockups)} mockup đã chọn.")
     images_for_output = {}
@@ -139,7 +147,7 @@ def main():
 
                 # BƯỚC 2: "TRỪU TƯỢNG HÓA" ẢNH GỐC
                 print(f"  - Stylizing ảnh (Posterize: {posterize_level}, Feather: {feather_margin})...")
-                stylized_img = stylize_image(input_img, posterize_level, feather_margin)
+                stylized_img = stylize_image(input_img, posterize_level, feather_margin, blur_factor)
                 
                 # BƯỚC 3: (TÙY CHỌN) THÊM TEXT
                 if add_text:

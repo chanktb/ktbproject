@@ -309,77 +309,129 @@ def add_watermark(image_to_watermark, watermark_descriptor, watermark_dir, font_
             
     return image_to_watermark
 
-def stylize_image(image_pil, posterize_level=4, feather_margin=0.15):
+# utils/image_processing.py
+
+def stylize_image(image_pil, posterize_level=4, feather_margin=0.1, blur_factor=5):
     """
-    "Trừu tượng hóa" một bức ảnh bằng cách giảm màu và làm mờ viền.
-    - posterize_level: Càng thấp, màu càng ít và càng "trừu tượng".
-    - feather_margin: Tỷ lệ viền mờ (vd: 0.15 = 15% cạnh ngoài sẽ bị làm mờ).
+    "Trừu tượng hóa" ảnh bằng cách giảm màu và làm mờ viền một cách tùy chỉnh.
+    - posterize_level: Càng thấp, màu càng ít.
+    - feather_margin: Tỷ lệ độ rộng của viền mờ (vd: 0.1 = 10%).
+    - blur_factor: Hệ số làm nét. Số càng LỚN, viền càng SẮC NÉT (ít nhòe).
     """
-    # Bước 1: Posterize - Giảm số lượng màu
-    # Chuyển sang chế độ 'P' với số màu giới hạn, sau đó chuyển lại RGBA
+    # Bước 1: Posterize (giữ nguyên)
     posterized_img = image_pil.convert('P', palette=Image.ADAPTIVE, colors=2**posterize_level).convert('RGBA')
 
-    # Bước 2: Tạo mặt nạ để làm mờ viền (Feathered Edges)
+    # Bước 2: Tạo mặt nạ để làm mờ viền (phiên bản mới)
     width, height = posterized_img.size
-    mask = Image.new('L', (width, height), 0) # Tạo mask đen hoàn toàn
+    mask = Image.new('L', (width, height), 0)
     draw = ImageDraw.Draw(mask)
 
-    # Vẽ một hình chữ nhật trắng nhỏ hơn ở giữa
+    # Tính toán các lề
     margin_w = int(width * feather_margin)
-    margin_h = int(height * feather_margin)
+    margin_h_top = int(height * feather_margin) # Lề trên và 2 bên
+    margin_h_bottom = margin_h_top // 2        # <<< LỀ DƯỚI CHỈ BẰNG MỘT NỬA
+
+    # Vẽ hình chữ nhật trắng với lề dưới nhỏ hơn
     draw.rectangle(
-        (margin_w, margin_h, width - margin_w, height - margin_h),
+        (margin_w, margin_h_top, width - margin_w, height - margin_h_bottom),
         fill=255
     )
 
-    # Làm mờ mạnh cái mask để tạo ra gradient
-    mask = mask.filter(ImageFilter.GaussianBlur(radius=max(margin_w, margin_h) // 2))
+    # Tính toán bán kính làm mờ dựa trên hệ số `blur_factor`
+    # blur_factor càng lớn, bán kính càng nhỏ, viền càng nét
+    blur_radius = max(1, max(margin_w, margin_h_top) // blur_factor)
+    
+    mask = mask.filter(ImageFilter.GaussianBlur(radius=blur_radius))
 
     # Áp dụng mask vào kênh alpha của ảnh
     posterized_img.putalpha(mask)
     
     return posterized_img
 
-def add_hashtag_text(image_pil, filename, fonts_dir, text_margin=20):
+def add_hashtag_text(image_pil, filename, fonts_dir, image_width, is_black_mockup):
     """
-    Ghép text hashtag (#filename) vào bên dưới ảnh.
+    Ghép text hashtag vào bên dưới ảnh với kích thước, màu sắc,
+    và vị trí được tính toán chính xác để không bị cắt ký tự.
     """
-    # 1. Chuẩn bị text và font
     text_to_add = "#" + os.path.splitext(filename)[0].replace('-', ' ').replace('_', ' ')
+    text_color = (255, 255, 255) if is_black_mockup else (50, 50, 50)
     
     try:
-        font_files = [f for f in os.listdir(fonts_dir) if f.lower().endswith('.ttf')]
-        if not font_files:
-            raise FileNotFoundError("Không tìm thấy file font nào.")
+        font_files = [f for f in os.listdir(fonts_dir) if f.lower().endswith(('.ttf', '.otf'))]
+        if not font_files: raise FileNotFoundError("Không tìm thấy file font.")
         random_font_path = os.path.join(fonts_dir, random.choice(font_files))
         
-        # Tự động điều chỉnh kích thước font
-        font_size = max(40, int(image_pil.width / 10))
+        font_size = 100
         font = ImageFont.truetype(random_font_path, font_size)
-    except Exception as e:
-        print(f"  - ⚠️ Lỗi font: {e}. Dùng font mặc định.")
-        font = ImageFont.load_default()
+        
+        # Dùng getbbox để lấy chiều cao chính xác
+        bbox = font.getbbox(text_to_add)
+        text_height = bbox[3] - bbox[1]
 
-    # 2. Tính toán kích thước
-    draw = ImageDraw.Draw(image_pil) # Dùng tạm để tính toán
-    text_bbox = draw.textbbox((0, 0), text_to_add, font=font)
-    text_width = text_bbox[2] - text_bbox[0]
-    text_height = text_bbox[3] - text_bbox[1]
+        if text_height > 80:
+            scale = 80 / text_height
+            font_size = int(font_size * scale)
+            font = ImageFont.truetype(random_font_path, font_size)
+        
+        bbox = font.getbbox(text_to_add)
+        text_width = bbox[2] - bbox[0]
+        
+        if text_width > image_width:
+            scale = image_width / text_width
+            font_size = int(font_size * scale)
+            font = ImageFont.truetype(random_font_path, font_size)
+            
+    except Exception as e:
+        print(f"  - ⚠️ Lỗi font: {e}. Dùng font mặc định."); font = ImageFont.load_default()
+
+    # <<< THAY ĐỔI: TÍNH TOÁN LẠI KÍCH THƯỚC VÀ VỊ TRÍ DỰA TRÊN GETBBOX >>>
     
-    # 3. Tạo canvas mới lớn hơn để chứa cả ảnh và text
+    # 1. Tính toán kích thước pixel thực tế của text
+    bbox = font.getbbox(text_to_add)
+    x0, y0, x1, y1 = bbox
+    text_width = x1 - x0
+    text_height = y1 - y0
+
+    text_margin = 20
+    
+    # 2. Tạo canvas mới đủ lớn
     new_height = image_pil.height + text_height + text_margin
     new_width = max(image_pil.width, text_width)
     final_canvas = Image.new('RGBA', (new_width, new_height), (0,0,0,0))
     
-    # 4. Ghép ảnh và text vào canvas
-    # Dán ảnh vào trên
+    # 3. Ghép ảnh và text vào canvas
     img_paste_x = (new_width - image_pil.width) // 2
     final_canvas.paste(image_pil, (img_paste_x, 0), image_pil)
     
-    # Vẽ text ở dưới
     text_draw = ImageDraw.Draw(final_canvas)
+    
+    # 4. Tính toán vị trí dán text có điều chỉnh
+    # Căn giữa theo chiều ngang
     text_paste_x = (new_width - text_width) // 2
+    # Vị trí dán theo chiều dọc
     text_paste_y = image_pil.height + text_margin
-    text_draw.text((text_paste_x, text_paste_y), text_to_add, font=font, fill=(0,0,0,255)) # Màu đen
+    
+    # Dán text, nhưng trừ đi offset (x0, y0) của bounding box
+    # để đảm bảo toàn bộ text nằm trong vùng đã tính
+    text_draw.text((text_paste_x - x0, text_paste_y - y0), text_to_add, font=font, fill=text_color)
     
     return final_canvas
+
+def determine_mockup_color(image_pil, threshold=60):
+    """
+    Phân tích độ sáng tổng thể của ảnh để quyết định dùng mockup đen hay trắng.
+    Trả về True nếu nên dùng mockup ĐEN, False nếu nên dùng mockup TRẮNG.
+    """
+    # Thu nhỏ ảnh về 1x1 pixel để lấy màu trung bình
+    avg_color_img = image_pil.resize((1, 1), Image.Resampling.NEAREST)
+    avg_color = avg_color_img.getpixel((0, 0))
+    
+    # Tính độ sáng cảm nhận (luminance), chính xác hơn là tính trung bình cộng
+    r, g, b = avg_color[:3]
+    luminance = (0.299 * r + 0.587 * g + 0.114 * b)
+    
+    # Nếu ảnh rất tối (độ sáng < ngưỡng), nó sẽ không nổi bật trên nền đen -> dùng áo trắng
+    if luminance < threshold:
+        return False # -> Dùng mockup TRẮNG
+    else:
+        return True # -> Dùng mockup ĐEN

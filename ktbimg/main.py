@@ -41,7 +41,7 @@ load_dotenv(dotenv_path=os.path.join(PROJECT_ROOT, '.env'))
 CONFIG_FILE = os.path.join(PROJECT_ROOT, "config.json")
 MOCKUP_DIR = os.path.join(PROJECT_ROOT, "mockup")
 WATERMARK_DIR = os.path.join(PROJECT_ROOT, "watermark")
-FONT_FILE = os.path.join(PROJECT_ROOT, "verdanab.ttf")
+FONT_FILE = os.path.join(PROJECT_ROOT, "fonts", "verdanab.ttf")
 
 # Đường dẫn riêng của tool này
 INPUT_DIR = os.path.join(TOOL_DIR, "InputImage")
