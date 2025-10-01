@@ -463,7 +463,8 @@
 					"pattern": "-t-shirt.jpg",
 					"action": "generate",
 					"mockup_sets_to_use": ["printiment"],
-					"coords": { "x": 121, "y": 232, "w": 435, "h": 479 }
+					"coords": { "x": 121, "y": 232, "w": 435, "h": 479 },
+					"erase_zones": [{ "x": 526, "y": 223, "w": 52, "h": 186 }]
 				},
                 {
 					"pattern": "-shirt.jpg",
