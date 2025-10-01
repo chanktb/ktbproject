@@ -4,6 +4,7 @@ import os
 import json
 import random
 from datetime import datetime
+import pytz
 from PIL import Image, ImageFilter, ImageFont
 from io import BytesIO
 from dotenv import load_dotenv
@@ -13,8 +14,8 @@ from utils.image_processing import (
     stylize_image,
     add_hashtag_text,
     trim_transparent_background,
-    apply_mockup,
-    add_watermark
+    add_watermark,
+    determine_mockup_color
 )
 from utils.file_io import (
     load_config,
@@ -86,14 +87,19 @@ def get_krt_inputs(available_mockups):
 
 def cleanup_input_directory(directory, processed_files_list):
     """Xóa các file đã xử lý trong thư mục Input."""
-    print(f"\n--- 🗑️  Dọn dẹp thư mục: {directory} ---")
-    if not os.path.exists(directory): return
-    for filename in processed_files_list:
-        try:
-            os.unlink(os.path.join(directory, filename))
-            print(f"  - Đã xóa: {filename}")
-        except Exception as e:
-            print(f'Lỗi khi xóa {filename}. Lý do: {e}')
+    print("-" * 50)
+    choice = input("▶️ Xử lý hoàn tất. Xóa các file ảnh trong InputImage? (Enter = XÓA, 'n' = Giữ lại): ")
+    if choice.lower() != 'n':
+        print(f"\n--- 🗑️  Dọn dẹp thư mục: {directory} ---")
+        if not os.path.exists(directory): return
+        for filename in processed_files_list:
+            try:
+                os.unlink(os.path.join(directory, filename))
+                print(f"  - Đã xóa: {filename}")
+            except Exception as e:
+                print(f'Lỗi khi xóa {filename}. Lý do: {e}')
+    else:
+        print("  -> 💾 Đã giữ lại các file trong InputImage.")
 
 # --- HÀM MAIN CHÍNH ---
 def main():
@@ -119,7 +125,7 @@ def main():
     print(f"🔎 Tìm thấy {len(images_to_process)} ảnh, sẽ áp dụng {len(selected_mockups)} mockup đã chọn.")
     images_for_output = {}
     total_processed_this_run = {}
-    run_timestamp = datetime.now().strftime('%Y%m%d_%H%M%S')
+    run_timestamp = datetime.now(pytz.timezone('Asia/Ho_Chi_Minh')).strftime('%Y%m%d_%H%M%S')
 
     for image_filename in images_to_process:
         print(f"\n--- 🎨  Đang sáng tạo từ: {image_filename} ---")
@@ -127,31 +133,64 @@ def main():
             with Image.open(os.path.join(INPUT_DIR, image_filename)) as img:
                 input_img = img.convert("RGBA")
                 
+                # BƯỚC 1: TỰ ĐỘNG CHỌN MÀU MOCKUP
+                use_black_mockup = determine_mockup_color(input_img)
+                print(f"  - Phân tích ảnh: Đề xuất dùng mockup {'ĐEN' if use_black_mockup else 'TRẮNG'}.")
+
+                # BƯỚC 2: "TRỪU TƯỢNG HÓA" ẢNH GỐC
                 print(f"  - Stylizing ảnh (Posterize: {posterize_level}, Feather: {feather_margin})...")
                 stylized_img = stylize_image(input_img, posterize_level, feather_margin)
                 
+                # BƯỚC 3: (TÙY CHỌN) THÊM TEXT
                 if add_text:
                     print("  - Thêm text hashtag...")
-                    final_design = add_hashtag_text(stylized_img, image_filename, FONTS_DIR)
+                    final_design = add_hashtag_text(stylized_img, image_filename, FONTS_DIR, stylized_img.width, use_black_mockup)
                 else:
                     final_design = stylized_img
-
+                
+                # BƯỚC 4: CẮT GỌN LẠI TOÀN BỘ DESIGN
                 final_design_trimmed = trim_transparent_background(final_design)
                 if not final_design_trimmed:
                     print("  - ⚠️ Cảnh báo: Ảnh trống sau khi xử lý, bỏ qua."); continue
 
-                is_white = True
+                # BƯỚC 5: GHÉP VÀO CÁC MOCKUP ĐÃ CHỌN
                 for mockup_name in selected_mockups:
                     mockup_config = mockup_sets_config.get(mockup_name)
                     if not mockup_config: continue
 
                     print(f"  - Áp dụng mockup: '{mockup_name}'")
-                    mockup_path = find_mockup_image(MOCKUP_DIR, mockup_name, "white" if is_white else "black")
+                    mockup_path = find_mockup_image(MOCKUP_DIR, mockup_name, "black" if use_black_mockup else "white")
                     if not mockup_path:
                         print(f"    - ⚠️ Cảnh báo: Không tìm thấy file ảnh mockup. Bỏ qua."); continue
                     
                     with Image.open(mockup_path) as mockup_img:
-                        final_mockup = apply_mockup(final_design_trimmed, mockup_img, mockup_config.get("coords"))
+                        
+                        # BƯỚC 6: LOGIC RESIZE VÀ CĂN CHỈNH TỔNG THỂ MỚI
+                        mockup_coords = mockup_config.get("coords")
+                        if not mockup_coords:
+                            print(f"    - ⚠️ Cảnh báo: Mockup '{mockup_name}' thiếu 'coords'. Bỏ qua."); continue
+
+                        obj_w, obj_h = final_design_trimmed.size
+                        frame_w, frame_h = mockup_coords['w'], mockup_coords['h']
+                        
+                        scale_w = frame_w / obj_w
+                        scale_h = frame_h / obj_h
+                        scale = min(scale_w, scale_h)
+
+                        final_w, final_h = int(obj_w * scale), int(obj_h * scale)
+                        resized_final_design = final_design_trimmed.resize((final_w, final_h), Image.Resampling.LANCZOS)
+                        
+                        if scale_w < scale_h: # Chiều rộng đạt trước
+                            paste_x = mockup_coords['x']
+                            paste_y = mockup_coords['y']
+                        else: # Chiều cao đạt trước
+                            paste_x = mockup_coords['x'] + (frame_w - final_w) // 2
+                            paste_y = mockup_coords['y']
+                        
+                        final_mockup = mockup_img.copy().convert("RGBA")
+                        final_mockup.paste(resized_final_design, (paste_x, paste_y), resized_final_design)
+
+                        # BƯỚC 7: CÁC BƯỚC CÒN LẠI
                         watermark_desc = mockup_config.get("watermark_text")
                         final_mockup_with_wm = add_watermark(final_mockup, watermark_desc, WATERMARK_DIR, FONT_FILE)
                         
@@ -187,15 +226,8 @@ def main():
                 with open(os.path.join(output_path, filename), 'wb') as f:
                     f.write(data)
 
-    # <<< THAY ĐỔI: HỎI NGƯỜI DÙNG TRƯỚC KHI DỌN DẸP >>>
     if images_to_process:
-        print("-" * 50)
-        choice = input("▶️ Xử lý hoàn tất. Xóa các file ảnh trong InputImage? (Enter = XÓA, 'n' = Giữ lại): ")
-        if choice.lower() != 'n':
-            cleanup_input_directory(INPUT_DIR, images_to_process)
-        else:
-            print("  -> 💾 Đã giữ lại các file trong InputImage.")
-
+        cleanup_input_directory(INPUT_DIR, images_to_process)
 
     if total_processed_this_run:
         update_total_image_count(TOTAL_IMAGE_FILE, total_processed_this_run)
