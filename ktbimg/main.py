@@ -166,13 +166,25 @@ def main():
         images_for_output = {}
         run_timestamp = datetime.now(pytz.timezone('Asia/Ho_Chi_Minh')).strftime('%Y%m%d_%H%M%S')
 
+        consecutive_error_count = 0
+        ERROR_THRESHOLD = 5
+
         for url in urls_to_process:
             filename = os.path.basename(url)
             print(f"\n--- 🖼️  Đang xử lý: {filename} ---")
             
             try:
-                img = download_image(url)
-                if not img: continue
+                # <<< THAY ĐỔI: Đặt timeout là 10 giây >>>
+                img = download_image(url, timeout=10)
+                if not img:
+                    consecutive_error_count += 1
+                    print(f"  - ⚠️ Lỗi tải ảnh lần {consecutive_error_count}/{ERROR_THRESHOLD}.")
+                    if consecutive_error_count >= ERROR_THRESHOLD:
+                        print(f"  - ❌ Lỗi: Đã có {consecutive_error_count} lỗi tải ảnh liên tiếp. Dừng xử lý file '{txt_filename}'.")
+                        break # Thoát khỏi vòng lặp xử lý URL của file .txt này
+                    continue
+
+                consecutive_error_count = 0 # Reset nếu tải thành công
 
                 # --- QUY TRÌNH SỬA LỖI ---
 
@@ -248,6 +260,10 @@ def main():
 
             except Exception as e:
                 print(f"❌ Lỗi nghiêm trọng khi xử lý file {filename}: {e}")
+                consecutive_error_count += 1
+                if consecutive_error_count >= ERROR_THRESHOLD:
+                    print(f"  - ❌ Lỗi: Đã có {consecutive_error_count} lỗi nghiêm trọng liên tiếp. Dừng xử lý file '{txt_filename}'.")
+                    break
 
         # --- LƯU KẾT QUẢ CHO FILE .TXT HIỆN TẠI ---
         if images_for_output:
