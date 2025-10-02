@@ -173,7 +173,7 @@ def send_telegram_summary(tool_name, total_image_file_path, session_counts):
     print(f"✈️  Chuẩn bị gửi báo cáo Telegram cho tool: {tool_name}...")
     
     token = os.getenv("TELEGRAM_BOT_TOKEN")
-    chat_id = os.getenv("TELEGRAM_CHAT_ID")
+    chat_id = os.getenv("TELEGRAM_CHAT_ID_CN")
 
     if not token or not chat_id:
         print("⚠️ Cảnh báo: Không tìm thấy biến môi trường Telegram. Bỏ qua."); return
