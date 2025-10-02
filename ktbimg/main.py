@@ -46,7 +46,7 @@ FONT_FILE = os.path.join(PROJECT_ROOT, "fonts", "verdanab.ttf")
 # Đường dẫn riêng của tool này
 INPUT_DIR = os.path.join(TOOL_DIR, "InputImage")
 OUTPUT_DIR = os.path.join(TOOL_DIR, "OutputImage")
-TOTAL_IMAGE_FILE = os.path.join(TOOL_DIR, "TotalImage.txt")
+TOTAL_IMAGE_FILE = os.path.join(PROJECT_ROOT, "TotalImage.txt")
 
 # --- CÁC HÀM HỖ TRỢ RIÊNG CỦA TOOL NÀY ---
 def get_user_inputs(available_mockups):
@@ -291,10 +291,10 @@ def main():
 
     # --- CẬP NHẬT FILE ĐẾM TỔNG SAU KHI XONG HẾT ---
     if total_processed_this_run:
-        update_total_image_count(TOTAL_IMAGE_FILE, total_processed_this_run)
+        update_total_image_count(TOTAL_IMAGE_FILE, total_processed_this_run, "ktbimg")
     
     print("\n🎉 Quy trình đã hoàn tất tất cả các file! 🎉")
-    send_telegram_summary("ktbimg", TOTAL_IMAGE_FILE)
+    send_telegram_summary("ktbimg", TOTAL_IMAGE_FILE, total_processed_this_run)
 
 if __name__ == "__main__":
     main()

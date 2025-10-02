@@ -23,19 +23,17 @@ def load_config(config_path): # <--- Nhận vào config_path
         print(f"Lỗi: File '{config_path}' không phải là file JSON hợp lệ.")
         return {}
 
-def update_total_image_count(filepath, new_counts): # <--- Nhận vào filepath
-    """Đọc, cộng dồn và ghi lại file TotalImage.txt."""
+def update_total_image_count(filepath, new_counts, tool_name):
+    """
+    Đọc, cộng dồn và ghi lại file TotalImage.txt với key chi tiết theo tool.
+    """
     totals = {}
     try:
-        # SỬA LỖI: Dùng đúng tham số filepath đã được truyền vào
         with open(filepath, 'r', encoding='utf-8') as f:
             for line in f:
                 if ':' in line:
-                    parts = line.split(':', 1)
-                    try:
-                        totals[parts[0].strip()] = int(parts[1].strip())
-                    except (ValueError, IndexError):
-                        pass
+                    key, count = line.strip().split(':', 1)
+                    totals[key.strip()] = int(count.strip())
     except FileNotFoundError:
         print(f"Không tìm thấy file {os.path.basename(filepath)}, sẽ tạo file mới.")
     
@@ -43,15 +41,17 @@ def update_total_image_count(filepath, new_counts): # <--- Nhận vào filepath
         print(f"Không có ảnh mới nào được tạo để cập nhật {os.path.basename(filepath)}.")
         return
 
+    # Tạo key kết hợp: tool_name.mockup_name
     for mockup, count in new_counts.items():
-        totals[mockup] = totals.get(mockup, 0) + count
+        combined_key = f"{tool_name}.{mockup}"
+        totals[combined_key] = totals.get(combined_key, 0) + count
         
     try:
-        # SỬA LỖI: Dùng đúng tham số filepath đã được truyền vào
         with open(filepath, 'w', encoding='utf-8') as f:
-            for mockup in sorted(totals.keys()):
-                f.write(f"{mockup}: {totals[mockup]}\n")
-        print(f"📊 Đã cập nhật tổng số ảnh trong {os.path.basename(filepath)}")
+            # Sắp xếp theo key để file luôn gọn gàng
+            for key in sorted(totals.keys()):
+                f.write(f"{key}: {totals[key]}\n")
+        print(f"📊 Đã cập nhật tổng số ảnh chi tiết trong {os.path.basename(filepath)}")
     except Exception as e:
         print(f"Lỗi khi ghi file {os.path.basename(filepath)}: {e}")
 
@@ -165,9 +165,9 @@ def find_mockup_image(mockup_dir, mockup_name, color):
     return None
 
 # Thêm hàm mới này vào cuối file
-def send_telegram_summary(tool_name, total_image_file_path):
+def send_telegram_summary(tool_name, total_image_file_path, session_counts):
     """
-    Gửi báo cáo tóm tắt chứa nội dung của file TotalImage.txt qua Telegram.
+    Tạo báo cáo chi tiết, phân nhóm theo tool và gửi qua Telegram.
     """
     print(f"✈️  Chuẩn bị gửi báo cáo Telegram cho tool: {tool_name}...")
     
@@ -175,33 +175,44 @@ def send_telegram_summary(tool_name, total_image_file_path):
     chat_id = os.getenv("TELEGRAM_CHAT_ID_CN")
 
     if not token or not chat_id:
-        print("⚠️ Cảnh báo: Không tìm thấy biến môi trường Telegram. Bỏ qua việc gửi báo cáo.")
-        return
+        print("⚠️ Cảnh báo: Không tìm thấy biến môi trường Telegram. Bỏ qua."); return
 
     # 1. Tạo tiêu đề và timestamp
     header = f"--- Summary of Last {tool_name} Run ---"
     timestamp = datetime.now(pytz.timezone('Asia/Ho_Chi_Minh')).strftime('%Y-%m-%d %H:%M:%S %z')
-
-    # 2. Đọc nội dung file TotalImage.txt
+    
+    report_body = ""
     try:
+        # 2. Đọc tất cả dữ liệu tổng
+        all_totals = {}
         with open(total_image_file_path, 'r', encoding='utf-8') as f:
-            total_content = f.read().strip()
-        if not total_content:
-            total_content = "Chưa có dữ liệu."
+            for line in f:
+                if ':' in line:
+                    key, count = line.strip().split(':', 1)
+                    all_totals[key.strip()] = int(count.strip())
+
+        # 3. Tạo báo cáo chi tiết cho tool hiện tại
+        report_lines = []
+        if session_counts:
+            for mockup, new_count in sorted(session_counts.items()):
+                combined_key = f"{tool_name}.{mockup}"
+                total_count = all_totals.get(combined_key, new_count)
+                report_lines.append(f"    {mockup}: {total_count} (added: {new_count})")
+            report_body = "\n".join(report_lines)
+        else:
+            report_body = "Không có ảnh mới nào được tạo trong lần chạy này."
+
     except FileNotFoundError:
-        total_content = "File TotalImage.txt chưa được tạo."
+        report_body = "File TotalImage.txt chưa được tạo."
+    except Exception as e:
+        report_body = f"Lỗi khi đọc file báo cáo: {e}"
 
-    # 3. Ghép thành nội dung tin nhắn cuối cùng
-    message = f"{header}\nTimestamp: {timestamp}\n\n{total_content}"
+    # 4. Ghép thành nội dung tin nhắn cuối cùng
+    message = f"{header}\nTimestamp: {timestamp}\n\n{tool_name}:\n{report_body}"
 
-    # 4. Gửi tin nhắn
+    # 5. Gửi tin nhắn
     try:
-        response = requests.post(
-            f"https://api.telegram.org/bot{token}/sendMessage",
-            data={'chat_id': chat_id, 'text': message},
-            timeout=10
-        )
-        response.raise_for_status()
+        requests.post(f"https://api.telegram.org/bot{token}/sendMessage", data={'chat_id': chat_id, 'text': message}, timeout=10)
         print("✅ Gửi báo cáo tới Telegram thành công.")
     except Exception as e:
         print(f"❌ Lỗi khi gửi báo cáo tới Telegram: {e}")

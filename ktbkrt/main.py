@@ -40,7 +40,7 @@ FONTS_DIR = os.path.join(PROJECT_ROOT, "fonts")
 # Đường dẫn riêng của tool
 INPUT_DIR = os.path.join(TOOL_DIR, "InputImage")
 OUTPUT_DIR = os.path.join(TOOL_DIR, "OutputImage")
-TOTAL_IMAGE_FILE = os.path.join(TOOL_DIR, "TotalImage.txt")
+TOTAL_IMAGE_FILE = os.path.join(PROJECT_ROOT, "TotalImage.txt")
 
 # --- CÁC HÀM HỖ TRỢ RIÊNG CỦA TOOL NÀY ---
 
@@ -238,10 +238,10 @@ def main():
         cleanup_input_directory(INPUT_DIR, images_to_process)
 
     if total_processed_this_run:
-        update_total_image_count(TOTAL_IMAGE_FILE, total_processed_this_run)
+        update_total_image_count(TOTAL_IMAGE_FILE, total_processed_this_run, "ktbkrt")
     
     print(f"\n--- ✨ Hoàn tất! ---")
-    send_telegram_summary("ktbkrt", TOTAL_IMAGE_FILE)
+    send_telegram_summary("ktbkrt", TOTAL_IMAGE_FILE, total_processed_this_run)
 
 if __name__ == "__main__":
     main()

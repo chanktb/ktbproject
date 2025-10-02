@@ -34,7 +34,8 @@ from utils.file_io import (
     _convert_to_gps,
     create_exif_data,
     update_total_image_count,
-    find_mockup_image
+    find_mockup_image,
+    send_telegram_summary
 )
 
 # --- Cấu hình đường dẫn ---
@@ -56,7 +57,7 @@ FONT_FILE = os.path.join(PROJECT_ROOT, "fonts", "verdanab.ttf")
 
 # Đường dẫn riêng của tool ktbimage
 OUTPUT_DIR = os.path.join(TOOL_DIR, "OutputImage")
-TOTAL_IMAGE_FILE = os.path.join(TOOL_DIR, "TotalImage.txt")
+TOTAL_IMAGE_FILE = os.path.join(PROJECT_ROOT, "TotalImage.txt")
 GENERATE_LOG_FILE = os.path.join(TOOL_DIR, "generate.log")
 
 # Tải biến môi trường từ file .env ở thư mục gốc
@@ -359,11 +360,12 @@ def main():
 
     # CÁC BƯỚC CUỐI CÙNG
     write_log(urls_summary)
-    update_total_image_count(TOTAL_IMAGE_FILE, total_processed_this_run)
+    update_total_image_count(TOTAL_IMAGE_FILE, total_processed_this_run, "ktbimage")
     print("\n✅ Hoàn thành xử lý và ghi log.")
 
     commit_and_push_changes_locally()
     send_telegram_log_locally()
+    send_telegram_summary("ktbimage", TOTAL_IMAGE_FILE, total_processed_this_run)
 
     print("\n🎉 Quy trình đã hoàn tất! 🎉")
 
