@@ -168,11 +168,12 @@ def find_mockup_image(mockup_dir, mockup_name, color):
 def send_telegram_summary(tool_name, total_image_file_path, session_counts):
     """
     Tạo báo cáo chi tiết, phân nhóm theo tool và gửi qua Telegram.
+    Báo cáo sẽ bao gồm cả các mockup không có ảnh mới (added: 0).
     """
     print(f"✈️  Chuẩn bị gửi báo cáo Telegram cho tool: {tool_name}...")
     
     token = os.getenv("TELEGRAM_BOT_TOKEN")
-    chat_id = os.getenv("TELEGRAM_CHAT_ID_CN")
+    chat_id = os.getenv("TELEGRAM_CHAT_ID")
 
     if not token or not chat_id:
         print("⚠️ Cảnh báo: Không tìm thấy biến môi trường Telegram. Bỏ qua."); return
@@ -183,7 +184,9 @@ def send_telegram_summary(tool_name, total_image_file_path, session_counts):
     
     report_body = ""
     try:
-        # 2. Đọc tất cả dữ liệu tổng
+        # --- LOGIC MỚI ĐỂ TẠO BÁO CÁO ĐẦY ĐỦ ---
+
+        # 2. Đọc tất cả dữ liệu tổng từ file
         all_totals = {}
         with open(total_image_file_path, 'r', encoding='utf-8') as f:
             for line in f:
@@ -191,26 +194,38 @@ def send_telegram_summary(tool_name, total_image_file_path, session_counts):
                     key, count = line.strip().split(':', 1)
                     all_totals[key.strip()] = int(count.strip())
 
-        # 3. Tạo báo cáo chi tiết cho tool hiện tại
+        # 3. Lấy tất cả các mockup liên quan đến tool này (cả cũ và mới)
+        # Lấy từ lịch sử
+        historical_mockups = {key.split('.', 1)[1] for key in all_totals if key.startswith(f"{tool_name}.")}
+        # Lấy từ lần chạy hiện tại
+        session_mockups = set(session_counts.keys())
+        # Gộp lại và sắp xếp
+        all_relevant_mockups = sorted(list(historical_mockups.union(session_mockups)))
+
+        # 4. Tạo báo cáo chi tiết
         report_lines = []
-        if session_counts:
-            for mockup, new_count in sorted(session_counts.items()):
+        if not all_relevant_mockups:
+            report_body = "Chưa có dữ liệu nào được xử lý cho tool này."
+        else:
+            for mockup in all_relevant_mockups:
+                # Lấy số mới thêm, nếu không có thì mặc định là 0
+                new_count = session_counts.get(mockup, 0)
+                
+                # Lấy tổng số từ file
                 combined_key = f"{tool_name}.{mockup}"
-                total_count = all_totals.get(combined_key, new_count)
+                total_count = all_totals.get(combined_key, 0)
+                
                 report_lines.append(f"    {mockup}: {total_count} (added: {new_count})")
             report_body = "\n".join(report_lines)
-        else:
-            report_body = "Không có ảnh mới nào được tạo trong lần chạy này."
 
     except FileNotFoundError:
         report_body = "File TotalImage.txt chưa được tạo."
     except Exception as e:
         report_body = f"Lỗi khi đọc file báo cáo: {e}"
 
-    # 4. Ghép thành nội dung tin nhắn cuối cùng
+    # 5. Ghép và gửi tin nhắn (không đổi)
     message = f"{header}\nTimestamp: {timestamp}\n\n{tool_name}:\n{report_body}"
 
-    # 5. Gửi tin nhắn
     try:
         requests.post(f"https://api.telegram.org/bot{token}/sendMessage", data={'chat_id': chat_id, 'text': message}, timeout=10)
         print("✅ Gửi báo cáo tới Telegram thành công.")
