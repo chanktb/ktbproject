@@ -155,7 +155,7 @@
                 {
 					"pattern": "-long-sleeve.jpg",
 					"action": "generate",
-					"mockup_sets_to_use": ["printiment"],
+					"mockup_sets_to_use": ["ktbtee"],
 					"coords": { "x": 643, "y": 889, "w": 707, "h": 982 }
 				},
                 {
@@ -591,7 +591,7 @@
                 {
 					"pattern": "-Sweater.jpg",
 					"action": "generate",
-					"mockup_sets_to_use": ["printiment"],
+					"mockup_sets_to_use": ["albumcoverprint"],
 					"coords_white": { "x": 282, "y": 237, "w": 419, "h": 533 },
 					"coords_black": { "x": 282, "y": 237, "w": 419, "h": 533 },
 					"color_sample_coords": { "x": 468, "y": 193, "w": 76, "h": 36 }
@@ -599,7 +599,7 @@
                 {
 					"pattern": "-sweater.jpg",
 					"action": "generate",
-					"mockup_sets_to_use": ["printiment"],
+					"mockup_sets_to_use": ["albumcoverprint"],
 					"coords_white": { "x": 80, "y": 204, "w": 341, "h": 409 },
 					"coords_black": { "x": 95, "y": 204, "w": 318, "h": 392 },
 					"color_sample_coords": { "x": 89, "y": 162, "w": 42, "h": 25 }
@@ -688,7 +688,7 @@
                 {
 					"pattern": "",
 					"action": "generate",
-					"mockup_sets_to_use": ["printiment"],
+					"mockup_sets_to_use": ["amertee"],
 					"coords": { "x": 489, "y": 454, "w": 1029, "h": 1269 }
 				}
             ]
