@@ -10,10 +10,12 @@ import random
 
 # --- CÁC HÀM XỬ LÝ ẢNH CỐT LÕI ---
 
-def download_image(url):
-    headers = {'User-Agent': 'Mozilla/5.0...', 'Referer': quote(url, safe='/:?=&')}
+def download_image(url, timeout=30): # <<< THAY ĐỔI: Thêm tham số timeout
+    """Tải ảnh từ URL với thời gian chờ tùy chỉnh."""
+    headers = {'User-Agent': 'Mozilla/5.0'}
     try:
-        response = requests.get(url, headers=headers, timeout=30)
+        # Sử dụng giá trị timeout được truyền vào
+        response = requests.get(url, headers=headers, timeout=timeout)
         response.raise_for_status()
         return Image.open(BytesIO(response.content)).convert("RGBA")
     except Exception as e:
