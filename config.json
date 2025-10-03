@@ -95,7 +95,7 @@
         "albumcoverprint": {
             "white": "albumcoverprint_white.jpg",
             "black": "albumcoverprint_black.jpg",
-            "coords": { "x": 381, "y": 305, "w": 428, "h": 560 },
+            "coords": { "x": 358, "y": 240, "w": 469, "h": 583 },
             "watermark_text": "albumcoverprint.png",
             "title_prefix_to_add": "Original",
             "title_suffix_to_add": "T Shirt Sweater"
