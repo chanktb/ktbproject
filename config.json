@@ -685,6 +685,14 @@
 					"coords_white": { "x": 164, "y": 86, "w": 470, "h": 563 },
 					"coords_black": { "x": 226, "y": 132, "w": 359, "h": 459 },
 					"color_sample_coords": { "x": 247, "y": 65, "w": 41, "h": 13 }
+				},
+				{
+					"pattern": "-Sweatshirt.webp",
+					"action": "generate",
+					"mockup_sets_to_use": ["whatwillwear"],
+					"coords_white": { "x": 164, "y": 86, "w": 470, "h": 563 },
+					"coords_black": { "x": 226, "y": 132, "w": 359, "h": 459 },
+					"color_sample_coords": { "x": 247, "y": 65, "w": 41, "h": 13 }
 				}
             ]
         },
