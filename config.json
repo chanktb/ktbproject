@@ -72,7 +72,7 @@
             "white": "printiment_white.jpg",
             "black": "printiment_black.jpg",
             "coords": { "x": 441, "y": 340, "w": 361, "h": 446 },
-            "watermark_text": "",
+            "watermark_text": "printiment.png",
             "title_prefix_to_add": "",
             "title_suffix_to_add": "Tshirts Sweater Hoodie"
         },
@@ -80,7 +80,7 @@
             "white": "whatwillwear_white.jpg",
             "black": "whatwillwear_black.jpg",
             "coords": { "x": 368, "y": 305, "w": 416, "h": 538 },
-            "watermark_text": "",
+            "watermark_text": "whatwillwear.png",
             "title_prefix_to_add": "",
             "title_suffix_to_add": "Shirts"
         },
@@ -96,7 +96,7 @@
             "white": "albumcoverprint_white.jpg",
             "black": "albumcoverprint_black.jpg",
             "coords": { "x": 381, "y": 305, "w": 428, "h": 560 },
-            "watermark_text": "",
+            "watermark_text": "albumcoverprint.png",
             "title_prefix_to_add": "Original",
             "title_suffix_to_add": "T Shirt Sweater"
         },
@@ -104,7 +104,7 @@
             "white": "amertee_white.jpg",
             "black": "amertee_black.jpg",
             "coords": { "x": 383, "y": 285, "w": 406, "h": 513 },
-            "watermark_text": "amerteelogo.png",
+            "watermark_text": "amertee.png",
             "title_prefix_to_add": "",
             "title_suffix_to_add": "Premium Shirt Sweater"
         }
