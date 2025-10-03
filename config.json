@@ -706,6 +706,34 @@
 					"coords": { "x": 489, "y": 454, "w": 1029, "h": 1269 }
 				}
             ]
+        },
+        "nemoshirt.com": {
+			"output_mode": "folder",
+            "rules": [
+                {
+					"pattern": "-Mens-White-Tee.jpg",
+					"action": "generate",
+					"mockup_sets_to_use": ["amertee"],
+					"coords": { "x": 307, "y": 635, "w": 345, "h": 353 }
+				},
+				{
+					"pattern": "-Blackshirt.jpg",
+					"action": "generate",
+					"mockup_sets_to_use": ["amertee"],
+					"coords": { "x": 357, "y": 398, "w": 385, "h": 506 }
+				}
+            ]
+        },
+        "readyoctober.com": {
+			"output_mode": "folder",
+            "rules": [
+                {
+					"pattern": "-Sweater.jpg",
+					"action": "generate",
+					"mockup_sets_to_use": ["amertee"],
+					"coords": { "x": 205, "y": 137, "w": 362, "h": 409 }
+				}
+            ]
         }
     }
 }
