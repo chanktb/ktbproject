@@ -596,7 +596,7 @@
             "rules": [
                 {
 					"pattern": "-Sweater.jpg",
-					"action": "generate",
+					"action": "skip",
 					"mockup_sets_to_use": ["albumcoverprint"],
 					"coords_white": { "x": 282, "y": 237, "w": 419, "h": 533 },
 					"coords_black": { "x": 282, "y": 237, "w": 419, "h": 533 },
