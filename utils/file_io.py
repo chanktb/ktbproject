@@ -25,35 +25,64 @@ def load_config(config_path): # <--- Nhận vào config_path
 
 def update_total_image_count(filepath, new_counts, tool_name):
     """
-    Đọc, cộng dồn và ghi lại file TotalImage.txt với key chi tiết theo tool.
+    Đọc, cập nhật và ghi lại file TotalImage.txt với logic reset theo ngày.
     """
+    print(f"📊 Bắt đầu cập nhật file thống kê: {os.path.basename(filepath)}...")
+    
+    # Lấy ngày hiện tại theo múi giờ GMT+7
+    gmt7 = pytz.timezone('Asia/Ho_Chi_Minh')
+    today_str = datetime.now(gmt7).strftime('%Y-%m-%d')
+    
     totals = {}
+    last_update_date = None
+
+    # --- ĐỌC DỮ LIỆU CŨ VÀ KIỂM TRA NGÀY ---
     try:
         with open(filepath, 'r', encoding='utf-8') as f:
+            # Đọc dòng đầu tiên để lấy timestamp
+            first_line = f.readline().strip()
+            if "Timestamp:" in first_line:
+                # Trích xuất ngày từ timestamp, ví dụ: '2025-10-03'
+                last_update_date = first_line.split()[1]
+
+            # Đọc phần còn lại của file để lấy dữ liệu
             for line in f:
                 if ':' in line:
                     key, count = line.strip().split(':', 1)
                     totals[key.strip()] = int(count.strip())
     except FileNotFoundError:
-        print(f"Không tìm thấy file {os.path.basename(filepath)}, sẽ tạo file mới.")
-    
-    if not new_counts:
-        print(f"Không có ảnh mới nào được tạo để cập nhật {os.path.basename(filepath)}.")
-        return
+        print("   - Không tìm thấy file TotalImage.txt, sẽ tạo file mới cho ngày hôm nay.")
+    except Exception as e:
+        print(f"   - Lỗi khi đọc file TotalImage.txt: {e}. Sẽ tạo file mới.")
 
-    # Tạo key kết hợp: tool_name.mockup_name
-    for mockup, count in new_counts.items():
-        combined_key = f"{tool_name}.{mockup}"
-        totals[combined_key] = totals.get(combined_key, 0) + count
-        
+    # --- QUYẾT ĐỊNH RESET HAY CỘNG DỒN ---
+    if today_str != last_update_date:
+        print(f"   - Phát hiện ngày mới ({today_str}). Dữ liệu sẽ được reset.")
+        totals = {} # Xóa toàn bộ dữ liệu cũ
+    else:
+        print(f"   - Tiếp tục cộng dồn dữ liệu cho ngày {today_str}.")
+
+    # --- CẬP NHẬT DỮ LIỆU MỚI ---
+    if not new_counts:
+        print("   - Không có ảnh mới nào được tạo trong lần chạy này.")
+    else:
+        for mockup, count in new_counts.items():
+            combined_key = f"{tool_name}.{mockup}"
+            totals[combined_key] = totals.get(combined_key, 0) + count
+        print(f"   - Đã cập nhật {len(new_counts)} mục từ tool '{tool_name}'.")
+
+    # --- GHI LẠI TOÀN BỘ FILE ---
     try:
         with open(filepath, 'w', encoding='utf-8') as f:
-            # Sắp xếp theo key để file luôn gọn gàng
+            # Ghi timestamp mới ở dòng đầu tiên
+            f.write(f"Timestamp: {today_str}\n\n")
+            
+            # Ghi dữ liệu đã được cập nhật/reset
             for key in sorted(totals.keys()):
                 f.write(f"{key}: {totals[key]}\n")
-        print(f"📊 Đã cập nhật tổng số ảnh chi tiết trong {os.path.basename(filepath)}")
+        print(f"✅ Đã cập nhật thành công file {os.path.basename(filepath)}.")
     except Exception as e:
-        print(f"Lỗi khi ghi file {os.path.basename(filepath)}: {e}")
+        print(f"❌ Lỗi khi ghi file {os.path.basename(filepath)}: {e}")
 
 
 # --- CÁC HÀM XỬ LÝ METADATA VÀ TEXT ---
