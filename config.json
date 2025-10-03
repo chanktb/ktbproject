@@ -103,7 +103,7 @@
         "amertee": {
             "white": "amertee_white.jpg",
             "black": "amertee_black.jpg",
-            "coords": { "x": 383, "y": 285, "w": 406, "h": 513 },
+            "coords": { "x": 373, "y": 240, "w": 447, "h": 601 },
             "watermark_text": "amertee.png",
             "title_prefix_to_add": "",
             "title_suffix_to_add": "Premium Shirt Sweater"
@@ -184,6 +184,12 @@
 					"action": "generate",
 					"mockup_sets_to_use": ["albumcoverprint"],
 					"coords": { "x": 250, "y": 176, "w": 314, "h": 422 }
+				},
+				{
+					"pattern": "-T-shirts-Shirt.jpg",
+					"action": "generate",
+					"mockup_sets_to_use": ["albumcoverprint"],
+					"coords": { "x": 242, "y": 155, "w": 333, "h": 430 }
 				}
             ]
         },
