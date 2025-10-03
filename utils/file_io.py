@@ -194,6 +194,7 @@ def find_mockup_image(mockup_dir, mockup_name, color):
     return None
 
 # Thêm hàm mới này vào cuối file
+
 def send_telegram_summary(tool_name, total_image_file_path, session_counts):
     """
     Tạo báo cáo chi tiết, phân nhóm theo tool và gửi qua Telegram.
@@ -207,43 +208,39 @@ def send_telegram_summary(tool_name, total_image_file_path, session_counts):
     if not token or not chat_id:
         print("⚠️ Cảnh báo: Không tìm thấy biến môi trường Telegram. Bỏ qua."); return
 
-    # 1. Tạo tiêu đề và timestamp
     header = f"--- Summary of Last {tool_name} Run ---"
     timestamp = datetime.now(pytz.timezone('Asia/Ho_Chi_Minh')).strftime('%Y-%m-%d %H:%M:%S %z')
     
     report_body = ""
     try:
-        # --- LOGIC MỚI ĐỂ TẠO BÁO CÁO ĐẦY ĐỦ ---
-
-        # 2. Đọc tất cả dữ liệu tổng từ file
         all_totals = {}
         with open(total_image_file_path, 'r', encoding='utf-8') as f:
             for line in f:
-                if ':' in line:
-                    key, count = line.strip().split(':', 1)
-                    all_totals[key.strip()] = int(count.strip())
+                # <<< SỬA LỖI: Thêm điều kiện để bỏ qua dòng timestamp và các dòng không hợp lệ >>>
+                line = line.strip()
+                if not line or not ':' in line or line.startswith("Timestamp:"):
+                    continue
+                
+                try:
+                    key, count_str = line.split(':', 1)
+                    all_totals[key.strip()] = int(count_str.strip())
+                except ValueError:
+                    # Bỏ qua nếu dòng có định dạng sai (ví dụ: 'abc: xyz')
+                    print(f"  - ⚠️ Cảnh báo: Bỏ qua dòng không hợp lệ trong TotalImage.txt: '{line}'")
+                    continue
 
-        # 3. Lấy tất cả các mockup liên quan đến tool này (cả cũ và mới)
-        # Lấy từ lịch sử
         historical_mockups = {key.split('.', 1)[1] for key in all_totals if key.startswith(f"{tool_name}.")}
-        # Lấy từ lần chạy hiện tại
         session_mockups = set(session_counts.keys())
-        # Gộp lại và sắp xếp
         all_relevant_mockups = sorted(list(historical_mockups.union(session_mockups)))
 
-        # 4. Tạo báo cáo chi tiết
-        report_lines = []
         if not all_relevant_mockups:
             report_body = "Chưa có dữ liệu nào được xử lý cho tool này."
         else:
+            report_lines = []
             for mockup in all_relevant_mockups:
-                # Lấy số mới thêm, nếu không có thì mặc định là 0
                 new_count = session_counts.get(mockup, 0)
-                
-                # Lấy tổng số từ file
                 combined_key = f"{tool_name}.{mockup}"
                 total_count = all_totals.get(combined_key, 0)
-                
                 report_lines.append(f"    {mockup}: {total_count} (added: {new_count})")
             report_body = "\n".join(report_lines)
 
@@ -252,7 +249,6 @@ def send_telegram_summary(tool_name, total_image_file_path, session_counts):
     except Exception as e:
         report_body = f"Lỗi khi đọc file báo cáo: {e}"
 
-    # 5. Ghép và gửi tin nhắn (không đổi)
     message = f"{header}\nTimestamp: {timestamp}\n\n{tool_name}:\n{report_body}"
 
     try:
