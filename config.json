@@ -463,7 +463,7 @@
             ]
         },
         "designatshop.com": {
-			"output_mode": "folder",
+			"output_mode": "zip",
             "rules": [
                 {
 					"pattern": "-t-shirt.jpg",
