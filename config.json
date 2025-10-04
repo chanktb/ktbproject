@@ -589,6 +589,7 @@
             ]
         },
         "mercuryshirt.com": {
+			"output_mode": "folder",
             "rules": [
                 {
 					"pattern": "-shirt.jpg",
