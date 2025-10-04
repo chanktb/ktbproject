@@ -666,7 +666,7 @@
             ]
         },
         "digitalhandmades.com": {
-			"output_mode": "folder",
+			"output_mode": "zip",
             "rules": [
                 {
 					"pattern": "-Shirt.webp",
