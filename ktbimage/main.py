@@ -239,7 +239,7 @@ def main():
                         if temp_crop:
                             try:
                                 pixel = temp_crop.getpixel((1, temp_crop.height - 2))
-                                is_white = sum(pixel[:3]) / 3 > 128
+                                is_white = sum(pixel[:3]) / 3 > 210
                             except IndexError:
                                 is_white = True # Mặc định là trắng nếu ảnh crop quá nhỏ
                 
