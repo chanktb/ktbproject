@@ -622,7 +622,7 @@
                 {
 					"pattern": "-Ceramic-Ornament-Ceramic-Mug-Poster-and-Classic-Dad-Cap.jpg",
 					"action": "generate",
-					"mockup_sets_to_use": ["albumcoverprint"],
+					"mockup_sets_to_use": ["ktbtee"],
 					"coords_white": { "x": 117, "y": 741, "w": 286, "h": 449 },
 					"coords_black": { "x": 102, "y": 753, "w": 315, "h": 434 },
 					"color_sample_coords": { "x": 758, "y": 1056, "w": 36, "h": 22 }
