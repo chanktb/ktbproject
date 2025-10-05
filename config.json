@@ -630,14 +630,14 @@
                 {
 					"pattern": "-ornament-ornament.jpg",
 					"action": "generate",
-					"mockup_sets_to_use": ["printiment", "ktbtee"],
+					"mockup_sets_to_use": ["amertee", "ktbtee"],
 					"coords": { "x": 274, "y": 332, "w": 434, "h": 546 },
 					"color_sample_coords": { "x": 377, "y": 271, "w": 40, "h": 27 }
 				},
                 {
 					"pattern": "-ornament-ornament-white.jpg",
 					"action": "generate",
-					"mockup_sets_to_use": ["printiment", "ktbtee"],
+					"mockup_sets_to_use": ["amertee", "ktbtee"],
 					"coords": { "x": 255, "y": 294, "w": 481, "h": 599 },
 					"color_sample_coords": { "x": 375, "y": 250, "w": 55, "h": 21 }
 				}
