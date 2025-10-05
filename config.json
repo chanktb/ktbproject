@@ -667,14 +667,14 @@
             "rules": [
                 {
 					"pattern": "-shirt0.jpg",
-					"action": "generate",
+					"action": "skip",
 					"mockup_sets_to_use": ["whatwillwear"],
 					"coords": { "x": 359, "y": 353, "w": 313, "h": 392 },
 					"erase_zones": [{ "x": 358, "y": 345, "w": 52, "h": 23 }]
 				},
 				{
 					"pattern": "-Shirt0.jpg",
-					"action": "generate",
+					"action": "skip",
 					"mockup_sets_to_use": ["whatwillwear"],
 					"coords": { "x": 359, "y": 353, "w": 313, "h": 392 },
 					"erase_zones": [{ "x": 358, "y": 345, "w": 52, "h": 23 }]
