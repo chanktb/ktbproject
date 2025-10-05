@@ -36,6 +36,7 @@
             "shirt_classic",
             "shirts-men-shirt",
             "White-Ornaments",
+			"ornament-white",
 			"white-shirt",
             "classic-mens",
             "men-shirt",
@@ -625,6 +626,20 @@
 					"coords_white": { "x": 117, "y": 741, "w": 286, "h": 449 },
 					"coords_black": { "x": 102, "y": 753, "w": 315, "h": 434 },
 					"color_sample_coords": { "x": 758, "y": 1056, "w": 36, "h": 22 }
+				},
+                {
+					"pattern": "-ornament-ornament.jpg",
+					"action": "generate",
+					"mockup_sets_to_use": ["printiment", "ktbtee"],
+					"coords": { "x": 274, "y": 332, "w": 434, "h": 546 },
+					"color_sample_coords": { "x": 377, "y": 271, "w": 40, "h": 27 }
+				},
+                {
+					"pattern": "-ornament-ornament-white.jpg",
+					"action": "generate",
+					"mockup_sets_to_use": ["printiment", "ktbtee"],
+					"coords": { "x": 255, "y": 294, "w": 481, "h": 599 },
+					"color_sample_coords": { "x": 375, "y": 250, "w": 55, "h": 21 }
 				}
             ]
         },
