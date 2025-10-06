@@ -273,44 +273,24 @@ def main():
                 if not mockup_names_to_use:
                     print("  - ⏩ Bỏ qua: Quy tắc không chỉ định 'mockup_sets_to_use'."); skipped_urls_for_domain.append(url); skipped_by_rule_count += 1; continue
 
+                mockup_names_to_use = matched_rule.get("mockup_sets_to_use", [])
+                if not mockup_names_to_use:
+                    print("  - ⏩ Bỏ qua: Quy tắc không chỉ định 'mockup_sets_to_use'."); skipped_urls_for_domain.append(url); skipped_by_rule_count += 1; continue
+
                 for mockup_name in mockup_names_to_use:
                     mockup_config = mockup_sets_config.get(mockup_name)
-                    
                     if not mockup_config:
-                        print(f"  - ⚠️ Cảnh báo: Không tìm thấy định nghĩa cho mockup '{mockup_name}' trong config. Bỏ qua.")
-                        continue
-                    
-                    white_value = mockup_config.get("white")
-                    black_value = mockup_config.get("black")
-                    selected_white, selected_black = None, None
-
-                    if isinstance(white_value, list) and white_value: selected_white = random.choice(white_value)
-                    elif isinstance(white_value, str): selected_white = {"file": white_value, "coords": mockup_config.get("coords")}
-                    
-                    if isinstance(black_value, list) and black_value: selected_black = random.choice(black_value)
-                    elif isinstance(black_value, str): selected_black = {"file": black_value, "coords": mockup_config.get("coords")}
-                    
-                    mockup_data_to_use = selected_white if is_white else selected_black
-
-                    if not mockup_data_to_use:
-                        print(f"  - ⚠️ Cảnh báo: Mockup '{mockup_name}' không có tùy chọn cho màu {'trắng' if is_white else 'đen'}. Bỏ qua.")
-                        continue
-                        
-                    mockup_filename = mockup_data_to_use.get('file')
-                    mockup_coords = mockup_data_to_use.get('coords')
-
-                    if not mockup_filename or not mockup_coords:
-                        print(f"  - ⚠️ Cảnh báo: Cấu hình file/coords cho mockup '{mockup_name}' bị lỗi. Bỏ qua.")
+                        print(f"  - ⚠️ Cảnh báo: Không tìm thấy định nghĩa cho mockup '{mockup_name}'. Bỏ qua.")
                         continue
 
-                    # <<< SỬA LỖI: Ghép đường dẫn trực tiếp, không dùng find_mockup_image nữa >>>
-                    mockup_path = os.path.join(MOCKUP_DIR, mockup_filename)
-                    
-                    if not os.path.exists(mockup_path):
-                        print(f"  - ⚠️ Cảnh báo: Không tìm thấy file ảnh mockup tại '{mockup_path}'. Bỏ qua.")
-                        continue
-                    
-                    print(f"  - Áp dụng mockup: '{mockup_name}' (file: {mockup_filename})")
+                    # <<< GỌI HÀM THÔNG MINH MỚI >>>
+                    # Hàm sẽ tự xử lý mọi logic và trả về đường dẫn + tọa độ chính xác
+                    mockup_path, mockup_coords = find_mockup_image(MOCKUP_DIR, mockup_config, is_white)
+
+                    if not mockup_path:
+                        continue # Bỏ qua nếu không tìm thấy mockup phù hợp
+
+                    print(f"  - Áp dụng mockup: '{mockup_name}'")
                     
                     with Image.open(mockup_path) as mockup_img:
                         final_mockup = apply_mockup(trimmed_img, mockup_img, mockup_coords)

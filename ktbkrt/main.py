@@ -34,7 +34,7 @@ load_dotenv(dotenv_path=os.path.join(PROJECT_ROOT, '.env'))
 CONFIG_FILE = os.path.join(PROJECT_ROOT, "config.json")
 MOCKUP_DIR = os.path.join(PROJECT_ROOT, "mockup")
 WATERMARK_DIR = os.path.join(PROJECT_ROOT, "watermark")
-FONT_FILE = os.path.join(PROJECT_ROOT, "verdanab.ttf")
+FONT_FILE = os.path.join(PROJECT_ROOT, "fonts", "verdanab.ttf")
 FONTS_DIR = os.path.join(PROJECT_ROOT, "fonts")
 
 # Đường dẫn riêng của tool
@@ -54,14 +54,12 @@ def get_krt_inputs(available_mockups):
     except ValueError:
         posterize_level = 3
 
-    # Sửa lại giá trị mặc định để bạn dễ nhập số nhỏ
     try:
         feather_str = input("▶️ Nhập tỷ lệ làm mờ viền (0.01-0.5, Enter = 0.07): ")
         feather_margin = float(feather_str) if feather_str else 0.07
     except ValueError:
         feather_margin = 0.07
         
-    # <<< THÊM MỚI: HỎI VỀ ĐỘ SẮC NÉT CỦA VIỀN >>>
     try:
         blur_factor_str = input("▶️ Nhập độ sắc nét của viền (2-8, số càng LỚN viền càng NÉT, Enter = 6): ")
         blur_factor = int(blur_factor_str) if blur_factor_str else 6
@@ -94,7 +92,7 @@ def get_krt_inputs(available_mockups):
     return posterize_level, feather_margin, blur_factor, add_text, selected_mockups
 
 def cleanup_input_directory(directory, processed_files_list):
-    """Xóa các file đã xử lý trong thư mục Input."""
+    """Hỏi và xóa các file đã xử lý trong thư mục Input."""
     print("-" * 50)
     choice = input("▶️ Xử lý hoàn tất. Xóa các file ảnh trong InputImage? (Enter = XÓA, 'n' = Giữ lại): ")
     if choice.lower() != 'n':
@@ -130,6 +128,42 @@ def main():
 
     posterize_level, feather_margin, blur_factor, add_text, selected_mockups = get_krt_inputs(mockup_sets_config)
 
+    # <<< THAY ĐỔI: LOGIC CHỌN MOCKUP NGẪU NHIÊN CHO MỖI LẦN CHẠY >>>
+    print("\n🎲 Đang chọn ngẫu nhiên 1 phiên bản cho mỗi mockup set đã chọn...")
+    mockup_cache = {}
+    for name in selected_mockups:
+        mockup_config = mockup_sets_config.get(name)
+        if not mockup_config: continue
+
+        # Logic thông minh cho mockup TRẮNG
+        white_value = mockup_config.get("white")
+        selected_white = None
+        if isinstance(white_value, list) and white_value:
+            selected_white = random.choice(white_value)
+            print(f"  - Mockup '{name}' (trắng): đã chọn file ngẫu nhiên '{selected_white['file']}'")
+        elif isinstance(white_value, str): # Hỗ trợ cấu trúc cũ
+            selected_white = {"file": white_value, "coords": mockup_config.get("coords")}
+            print(f"  - Mockup '{name}' (trắng): sử dụng file config cũ '{selected_white['file']}'")
+
+        # Logic thông minh cho mockup ĐEN
+        black_value = mockup_config.get("black")
+        selected_black = None
+        if isinstance(black_value, list) and black_value:
+            selected_black = random.choice(black_value)
+            print(f"  - Mockup '{name}' (đen): đã chọn file ngẫu nhiên '{selected_black['file']}'")
+        elif isinstance(black_value, str): # Hỗ trợ cấu trúc cũ
+            selected_black = {"file": black_value, "coords": mockup_config.get("coords")}
+            print(f"  - Mockup '{name}' (đen): sử dụng file config cũ '{selected_black['file']}'")
+        
+        mockup_cache[name] = {
+            "white_data": selected_white,
+            "black_data": selected_black,
+            "watermark_text": mockup_config.get("watermark_text"),
+            "title_prefix_to_add": mockup_config.get("title_prefix_to_add", ""),
+            "title_suffix_to_add": mockup_config.get("title_suffix_to_add", "")
+        }
+    print("-" * 50)
+    
     print(f"🔎 Tìm thấy {len(images_to_process)} ảnh, sẽ áp dụng {len(selected_mockups)} mockup đã chọn.")
     images_for_output = {}
     total_processed_this_run = {}
@@ -141,69 +175,67 @@ def main():
             with Image.open(os.path.join(INPUT_DIR, image_filename)) as img:
                 input_img = img.convert("RGBA")
                 
-                # BƯỚC 1: TỰ ĐỘNG CHỌN MÀU MOCKUP
                 use_black_mockup = determine_mockup_color(input_img)
                 print(f"  - Phân tích ảnh: Đề xuất dùng mockup {'ĐEN' if use_black_mockup else 'TRẮNG'}.")
 
-                # BƯỚC 2: "TRỪU TƯỢNG HÓA" ẢNH GỐC
-                print(f"  - Stylizing ảnh (Posterize: {posterize_level}, Feather: {feather_margin})...")
+                print(f"  - Stylizing ảnh (Posterize: {posterize_level}, Feather: {feather_margin}, BlurFactor: {blur_factor})...")
                 stylized_img = stylize_image(input_img, posterize_level, feather_margin, blur_factor)
                 
-                # BƯỚC 3: (TÙY CHỌN) THÊM TEXT
                 if add_text:
                     print("  - Thêm text hashtag...")
                     final_design = add_hashtag_text(stylized_img, image_filename, FONTS_DIR, stylized_img.width, use_black_mockup)
                 else:
                     final_design = stylized_img
                 
-                # BƯỚC 4: CẮT GỌN LẠI TOÀN BỘ DESIGN
                 final_design_trimmed = trim_transparent_background(final_design)
                 if not final_design_trimmed:
                     print("  - ⚠️ Cảnh báo: Ảnh trống sau khi xử lý, bỏ qua."); continue
 
-                # BƯỚC 5: GHÉP VÀO CÁC MOCKUP ĐÃ CHỌN
                 for mockup_name in selected_mockups:
-                    mockup_config = mockup_sets_config.get(mockup_name)
-                    if not mockup_config: continue
-
+                    # <<< THAY ĐỔI: SỬ DỤNG MOCKUP TỪ CACHE >>>
+                    cached_data = mockup_cache.get(mockup_name)
+                    if not cached_data: continue
+                    
                     print(f"  - Áp dụng mockup: '{mockup_name}'")
-                    mockup_path = find_mockup_image(MOCKUP_DIR, mockup_name, "black" if use_black_mockup else "white")
-                    if not mockup_path:
-                        print(f"    - ⚠️ Cảnh báo: Không tìm thấy file ảnh mockup. Bỏ qua."); continue
+                    
+                    mockup_data_to_use = cached_data['white_data'] if not use_black_mockup else cached_data['black_data']
+                    
+                    if not mockup_data_to_use:
+                        print(f"    - ⚠️ Cảnh báo: Không có tùy chọn mockup cho màu này. Bỏ qua."); continue
+
+                    mockup_filename = mockup_data_to_use.get('file')
+                    mockup_coords = mockup_data_to_use.get('coords')
+
+                    if not mockup_filename or not mockup_coords:
+                        print(f"    - ⚠️ Cảnh báo: Cấu hình file/coords cho mockup '{mockup_name}' bị lỗi. Bỏ qua."); continue
+
+                    mockup_path = os.path.join(MOCKUP_DIR, mockup_filename)
+                    if not os.path.exists(mockup_path):
+                        print(f"    - ⚠️ Cảnh báo: Không tìm thấy file ảnh mockup '{mockup_filename}'. Bỏ qua."); continue
+                    # <<< KẾT THÚC THAY ĐỔI >>>
                     
                     with Image.open(mockup_path) as mockup_img:
                         
-                        # BƯỚC 6: LOGIC RESIZE VÀ CĂN CHỈNH TỔNG THỂ MỚI
-                        mockup_coords = mockup_config.get("coords")
-                        if not mockup_coords:
-                            print(f"    - ⚠️ Cảnh báo: Mockup '{mockup_name}' thiếu 'coords'. Bỏ qua."); continue
-
                         obj_w, obj_h = final_design_trimmed.size
                         frame_w, frame_h = mockup_coords['w'], mockup_coords['h']
                         
-                        scale_w = frame_w / obj_w
-                        scale_h = frame_h / obj_h
+                        scale_w, scale_h = frame_w / obj_w, frame_h / obj_h
                         scale = min(scale_w, scale_h)
 
                         final_w, final_h = int(obj_w * scale), int(obj_h * scale)
                         resized_final_design = final_design_trimmed.resize((final_w, final_h), Image.Resampling.LANCZOS)
                         
-                        if scale_w < scale_h: # Chiều rộng đạt trước
-                            paste_x = mockup_coords['x']
-                            paste_y = mockup_coords['y']
-                        else: # Chiều cao đạt trước
-                            paste_x = mockup_coords['x'] + (frame_w - final_w) // 2
-                            paste_y = mockup_coords['y']
+                        if scale_w < scale_h: paste_x, paste_y = mockup_coords['x'], mockup_coords['y']
+                        else: paste_x, paste_y = mockup_coords['x'] + (frame_w - final_w) // 2, mockup_coords['y']
                         
                         final_mockup = mockup_img.copy().convert("RGBA")
                         final_mockup.paste(resized_final_design, (paste_x, paste_y), resized_final_design)
 
-                        # BƯỚC 7: CÁC BƯỚC CÒN LẠI
-                        watermark_desc = mockup_config.get("watermark_text")
+                        watermark_desc = cached_data.get("watermark_text")
                         final_mockup_with_wm = add_watermark(final_mockup, watermark_desc, WATERMARK_DIR, FONT_FILE)
                         
-                        prefix = mockup_config.get("title_prefix_to_add", "")
-                        suffix = mockup_config.get("title_suffix_to_add", "")
+                        prefix = cached_data.get("title_prefix_to_add", "")
+                        suffix = cached_data.get("title_suffix_to_add", "")
                         base_name = os.path.splitext(image_filename)[0].replace('-', ' ').replace('_', ' ')
                         
                         final_filename_base = f"{prefix} {base_name} {suffix}".strip().replace('  ', ' ')

@@ -182,16 +182,40 @@ def create_exif_data(prefix, final_filename, exif_defaults):
         print(f"Lỗi khi tạo dữ liệu EXIF: {e}")
         return b''
 
-def find_mockup_image(mockup_dir, mockup_name, color):
+def find_mockup_image(mockup_dir, mockup_config, is_white):
     """
-    Tìm file ảnh mockup trong thư mục được chỉ định.
-    Hỗ trợ các định dạng .jpg, .webp, .png.
+    Hàm thông minh tìm kiếm file mockup.
+    Tự động xử lý cả cấu trúc config cũ (string) và mới (list).
+    Trả về một tuple: (đường_dẫn_file, tọa_độ) hoặc (None, None) nếu thất bại.
     """
-    for ext in ['.jpg', '.webp', '.png']:
-        filepath = os.path.join(mockup_dir, f"{mockup_name}_{color}{ext}")
-        if os.path.exists(filepath):
-            return filepath
-    return None
+    color_key = "white" if is_white else "black"
+    mockup_value = mockup_config.get(color_key)
+
+    # Trường hợp 1: Cấu trúc mới (dạng list) -> Chọn ngẫu nhiên
+    if isinstance(mockup_value, list) and mockup_value:
+        selected_option = random.choice(mockup_value)
+        filename = selected_option.get("file")
+        coords = selected_option.get("coords")
+    # Trường hợp 2: Cấu trúc cũ (dạng string)
+    elif isinstance(mockup_value, str):
+        filename = mockup_value
+        coords = mockup_config.get("coords")
+    # Trường hợp không có cấu hình
+    else:
+        return None, None
+
+    if not filename or not coords:
+        return None, None
+
+    # Tìm file trong thư mục Mockup
+    # Logic này có thể đơn giản hóa thành ghép đường dẫn trực tiếp
+    filepath = os.path.join(mockup_dir, filename)
+    if os.path.exists(filepath):
+        print(f"  - Đã tìm thấy mockup: '{filename}'")
+        return filepath, coords
+    else:
+        print(f"  - ⚠️ Cảnh báo: Không tìm thấy file ảnh mockup '{filename}'.")
+        return None, None
 
 # Thêm hàm mới này vào cuối file
 
