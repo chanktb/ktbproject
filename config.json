@@ -103,9 +103,14 @@
             "title_suffix_to_add": "T Shirt Sweater"
         },
         "amertee": {
-            "white": "amertee_white.jpg",
-            "black": "amertee_black.jpg",
-            "coords": { "x": 373, "y": 240, "w": 447, "h": 601 },
+            "white": [
+            { "file": "amertee_white.jpg", "coords": { "x": 373, "y": 240, "w": 447, "h": 601 } },
+            { "file": "amertee_white_1.jpg", "coords": { "x": 395, "y": 291, "w": 378, "h": 508 } }
+        ],
+            "black": [
+            { "file": "amertee_black.jpg", "coords": { "x": 373, "y": 240, "w": 447, "h": 601 } },
+            { "file": "amertee_black_1.jpg", "coords": { "x": 395, "y": 291, "w": 378, "h": 508 } }
+        ],
             "watermark_text": "amertee.png",
             "title_prefix_to_add": "",
             "title_suffix_to_add": "Premium Shirt Sweater"

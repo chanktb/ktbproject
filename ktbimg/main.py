@@ -7,6 +7,7 @@ import pytz
 from io import BytesIO
 from PIL import Image
 from dotenv import load_dotenv
+import random
 
 # Import các hàm từ module dùng chung
 from utils.image_processing import (
@@ -32,18 +33,11 @@ from utils.file_io import (
 # --- Cấu hình đường dẫn ---
 TOOL_DIR = os.path.dirname(os.path.abspath(__file__))
 PROJECT_ROOT = os.path.dirname(TOOL_DIR)
-
-# Tải biến môi trường từ file .env ở thư mục gốc của project
-# Thao tác này sẽ nạp các biến TELEGRAM_BOT_TOKEN và TELEGRAM_CHAT_ID vào môi trường
 load_dotenv(dotenv_path=os.path.join(PROJECT_ROOT, '.env'))
-
-# Đường dẫn tới các tài nguyên chung
 CONFIG_FILE = os.path.join(PROJECT_ROOT, "config.json")
 MOCKUP_DIR = os.path.join(PROJECT_ROOT, "mockup")
 WATERMARK_DIR = os.path.join(PROJECT_ROOT, "watermark")
 FONT_FILE = os.path.join(PROJECT_ROOT, "fonts", "verdanab.ttf")
-
-# Đường dẫn riêng của tool này
 INPUT_DIR = os.path.join(TOOL_DIR, "InputImage")
 OUTPUT_DIR = os.path.join(TOOL_DIR, "OutputImage")
 TOTAL_IMAGE_FILE = os.path.join(PROJECT_ROOT, "TotalImage.txt")
@@ -52,71 +46,43 @@ TOTAL_IMAGE_FILE = os.path.join(PROJECT_ROOT, "TotalImage.txt")
 def get_user_inputs(available_mockups):
     """Hỏi người dùng các tùy chọn cho tool KTBIMG."""
     print("-" * 50)
-    
-    # Hỏi pattern
     pattern = input("▶️ Nhập pattern để lọc file, ví dụ -shirt.jpg (nhấn Enter để xử lý tất cả): ")
-
-    # Hỏi tọa độ crop
     while True:
         try:
             coords_str = input('▶️ Nhập tọa độ vùng crop (ví dụ: {"x": 428, "y": 331, "w": 401, "h": 455}): ')
             crop_coords = json.loads(coords_str.replace("'", '"'))
-            if all(k in crop_coords for k in ['x', 'y', 'w', 'h']):
-                break
-            else:
-                print("Lỗi: Tọa độ phải chứa đủ các key 'x', 'y', 'w', 'h'.")
-        except (json.JSONDecodeError, TypeError):
-            print("Lỗi: Định dạng tọa độ không hợp lệ.")
-
-    # HỎI TỌA ĐỘ CẦN TẨY >>>
+            if all(k in crop_coords for k in ['x', 'y', 'w', 'h']): break
+            else: print("Lỗi: Tọa độ phải chứa đủ các key 'x', 'y', 'w', 'h'.")
+        except (json.JSONDecodeError, TypeError): print("Lỗi: Định dạng tọa độ không hợp lệ.")
     erase_zones = []
     while True:
         try:
             erase_str = input('▶️ Dán tọa độ vùng cần TẨY, cách nhau bởi dấu phẩy (Enter để bỏ qua): ')
-            if not erase_str.strip():
-                break # Người dùng không nhập gì, bỏ qua
-            
-            # Bọc chuỗi trong cặp ngoặc vuông để tạo thành một JSON array hợp lệ
+            if not erase_str.strip(): break
             json_array_str = f"[{erase_str}]"
             erase_zones = json.loads(json_array_str)
-            print(f"✅ Đã nhận {len(erase_zones)} vùng cần tẩy.")
-            break
-        except json.JSONDecodeError:
-            print("Lỗi: Định dạng tọa độ không hợp lệ. Vui lòng dán lại.")
-
-    # Hỏi góc xoay
+            print(f"✅ Đã nhận {len(erase_zones)} vùng cần tẩy."); break
+        except json.JSONDecodeError: print("Lỗi: Định dạng tọa độ không hợp lệ. Vui lòng dán lại.")
     while True:
         try:
             angle_str = input("▶️ Nhập góc xoay (ví dụ: -10, 5). Nhấn Enter để không xoay: ")
             angle = int(angle_str) if angle_str else 0
             break
-        except ValueError:
-            print("Lỗi: Vui lòng chỉ nhập số nguyên.")
-    
-    # Hỏi skip theo màu
+        except ValueError: print("Lỗi: Vui lòng chỉ nhập số nguyên.")
     skip_choice = input("▶️ Nhập '1' để skip ảnh TRẮNG, '2' để skip ảnh ĐEN (Enter để không skip): ")
     skip_white, skip_black = skip_choice == '1', skip_choice == '2'
-
-    # Hỏi chọn mockup set
     print("\n📜 Các mockup set có sẵn:")
     mockup_list = list(available_mockups.keys())
-    for i, name in enumerate(mockup_list):
-        print(f"  {i + 1}: {name}")
-
+    for i, name in enumerate(mockup_list): print(f"  {i + 1}: {name}")
     while True:
         try:
             choices_str = input("▶️ Chọn các mockup set cần dùng, cách nhau bởi dấu phẩy (ví dụ: 1,3,4): ")
-            if not choices_str:
-                print("Lỗi: Vui lòng chọn ít nhất một mockup."); continue
+            if not choices_str: print("Lỗi: Vui lòng chọn ít nhất một mockup."); continue
             selected_indices = [int(i.strip()) - 1 for i in choices_str.split(',')]
             selected_mockups = [mockup_list[i] for i in selected_indices if 0 <= i < len(mockup_list)]
-            if selected_mockups:
-                print(f"✅ Bạn đã chọn: {', '.join(selected_mockups)}"); break
-            else:
-                print("Lỗi: Lựa chọn không hợp lệ.")
-        except (ValueError, IndexError):
-            print("Lỗi: Vui lòng chỉ nhập các số hợp lệ.")
-
+            if selected_mockups: print(f"✅ Bạn đã chọn: {', '.join(selected_mockups)}"); break
+            else: print("Lỗi: Lựa chọn không hợp lệ.")
+        except (ValueError, IndexError): print("Lỗi: Vui lòng chỉ nhập các số hợp lệ.")
     print("-" * 50)
     return pattern, crop_coords, angle, skip_white, skip_black, selected_mockups, erase_zones
 
@@ -154,10 +120,44 @@ def main():
         if not all_urls:
             print("  - ⚠️  File txt trống, bỏ qua."); continue
 
-        # Hỏi người dùng MỘT LẦN cho mỗi file .txt
         pattern, crop_coords, angle, skip_white, skip_black, selected_mockups, erase_zones = get_user_inputs(mockup_sets_config)
         
-        # Lọc URL theo pattern
+        # <<< THAY ĐỔI: LOGIC CHỌN MOCKUP NGẪU NHIÊN CHO MỖI LẦN CHẠY FILE TXT >>>
+        print("\n🎲 Đang chọn ngẫu nhiên 1 phiên bản cho mỗi mockup set đã chọn...")
+        mockup_cache = {}
+        for name in selected_mockups:
+            mockup_config = mockup_sets_config.get(name)
+            if not mockup_config: continue
+
+            # Logic thông minh cho mockup TRẮNG
+            white_value = mockup_config.get("white")
+            selected_white = None
+            if isinstance(white_value, list) and white_value:
+                selected_white = random.choice(white_value)
+                print(f"  - Mockup '{name}' (trắng): đã chọn file ngẫu nhiên '{selected_white['file']}'")
+            elif isinstance(white_value, str): # Hỗ trợ cấu trúc cũ
+                selected_white = {"file": white_value, "coords": mockup_config.get("coords")}
+                print(f"  - Mockup '{name}' (trắng): sử dụng file config cũ '{selected_white['file']}'")
+
+            # Logic thông minh cho mockup ĐEN
+            black_value = mockup_config.get("black")
+            selected_black = None
+            if isinstance(black_value, list) and black_value:
+                selected_black = random.choice(black_value)
+                print(f"  - Mockup '{name}' (đen): đã chọn file ngẫu nhiên '{selected_black['file']}'")
+            elif isinstance(black_value, str): # Hỗ trợ cấu trúc cũ
+                selected_black = {"file": black_value, "coords": mockup_config.get("coords")}
+                print(f"  - Mockup '{name}' (đen): sử dụng file config cũ '{selected_black['file']}'")
+            
+            mockup_cache[name] = {
+                "white_data": selected_white, "black_data": selected_black,
+                "watermark_text": mockup_config.get("watermark_text"),
+                "title_prefix_to_add": mockup_config.get("title_prefix_to_add", ""),
+                "title_suffix_to_add": mockup_config.get("title_suffix_to_add", "")
+            }
+        print("-" * 50)
+        # <<< KẾT THÚC THAY ĐỔI >>>
+        
         urls_to_process = [url for url in all_urls if not pattern or pattern in os.path.basename(url)]
         if not urls_to_process:
             print(f"  - ⚠️ Không có URL nào trong file khớp với pattern '{pattern}'."); continue
@@ -174,73 +174,69 @@ def main():
             print(f"\n--- 🖼️  Đang xử lý: {filename} ---")
             
             try:
-                # <<< THAY ĐỔI: Đặt timeout là 10 giây >>>
                 img = download_image(url, timeout=10)
                 if not img:
                     consecutive_error_count += 1
-                    print(f"  - ⚠️ Lỗi tải ảnh lần {consecutive_error_count}/{ERROR_THRESHOLD}.")
                     if consecutive_error_count >= ERROR_THRESHOLD:
-                        print(f"  - ❌ Lỗi: Đã có {consecutive_error_count} lỗi tải ảnh liên tiếp. Dừng xử lý file '{txt_filename}'.")
-                        break # Thoát khỏi vòng lặp xử lý URL của file .txt này
+                        print(f"  - ❌ Lỗi: Đã có {consecutive_error_count} lỗi. Dừng xử lý file '{txt_filename}'."); break
                     continue
+                consecutive_error_count = 0
 
-                consecutive_error_count = 0 # Reset nếu tải thành công
-
-                # --- QUY TRÌNH SỬA LỖI ---
-
-                # BƯỚC 1: XÁC ĐỊNH MÀU NỀN TRƯỚC
-                # Dùng tọa độ crop mà người dùng đã nhập ở đầu để xác định màu
                 try:
                     temp_crop_for_color = crop_by_coords(img, crop_coords)
                     if temp_crop_for_color:
                         pixel = temp_crop_for_color.getpixel((1, temp_crop_for_color.height - 2))
                         is_white = sum(pixel[:3]) / 3 > 128
-                    else: # Nếu crop lỗi, mặc định là trắng
-                        is_white = True
-                except (TypeError, IndexError):
-                    is_white = True
+                    else: is_white = True
+                except (TypeError, IndexError): is_white = True
                 
                 background_color = (255, 255, 255) if is_white else (0, 0, 0)
                 print(f"  - Màu nền được xác định là: {'Trắng' if is_white else 'Đen'}")
 
-                # BƯỚC 2: TẨY WATERMARK BẰNG MÀU NỀN VỪA TÌM ĐƯỢC
                 if erase_zones:
-                    print("  - Tẩy watermark theo tọa độ đã nhập...")
-                    # Gọi hàm với đủ 3 tham số
                     img = erase_areas(img, erase_zones, background_color)
                 
-                # BƯỚC 3: CÁC BƯỚC XỬ LÝ CÒN LẠI NHƯ CŨ
                 initial_crop = crop_by_coords(img, crop_coords)
                 if not initial_crop: continue
                 
                 if (skip_white and is_white) or (skip_black and not is_white):
                     print(f"  - ⏩ Bỏ qua theo tùy chọn skip màu."); continue
                     
-                bg_removed = remove_background_advanced(initial_crop) # hoặc remove_background_advanced
+                bg_removed = remove_background_advanced(initial_crop)
                 final_design = rotate_image(bg_removed, angle)
                 trimmed_img = trim_transparent_background(final_design)
                 if not trimmed_img:
                     print("  - ⚠️ Cảnh báo: Ảnh trống sau khi xử lý."); continue
 
-                # 5. GHÉP VÀO CÁC MOCKUP ĐÃ CHỌN
                 for mockup_name in selected_mockups:
-                    mockup_config = mockup_sets_config.get(mockup_name)
-                    if not mockup_config: print(f"  - ⚠️ Cảnh báo: Không tìm thấy config cho mockup '{mockup_name}'."); continue
-
-                    mockup_path = find_mockup_image(MOCKUP_DIR, mockup_name, "white" if is_white else "black")
-                    if not mockup_path: print(f"  - ⚠️ Cảnh báo: Không tìm thấy file ảnh mockup cho '{mockup_name}'."); continue
+                    # <<< THAY ĐỔI: LẤY DỮ LIỆU TỪ CACHE ĐÃ CHỌN NGẪU NHIÊN >>>
+                    cached_data = mockup_cache.get(mockup_name)
+                    if not cached_data: continue
                     
+                    mockup_data_to_use = cached_data['white_data'] if is_white else cached_data['black_data']
+                    if not mockup_data_to_use:
+                        print(f"    - ⚠️ Cảnh báo: Không có tùy chọn mockup cho màu này. Bỏ qua."); continue
+
+                    mockup_filename = mockup_data_to_use.get('file')
+                    mockup_coords = mockup_data_to_use.get('coords')
+                    if not mockup_filename or not mockup_coords:
+                        print(f"    - ⚠️ Cảnh báo: Cấu hình mockup cho '{mockup_name}' bị lỗi. Bỏ qua."); continue
+                    
+                    mockup_path = os.path.join(MOCKUP_DIR, mockup_filename)
+                    if not os.path.exists(mockup_path):
+                        print(f"    - ⚠️ Cảnh báo: Không tìm thấy file ảnh mockup '{mockup_filename}'. Bỏ qua."); continue
+                    # <<< KẾT THÚC THAY ĐỔI >>>
+
                     with Image.open(mockup_path) as mockup_img:
-                        final_mockup = apply_mockup(trimmed_img, mockup_img, mockup_config.get("coords"))
+                        final_mockup = apply_mockup(trimmed_img, mockup_img, mockup_coords)
                         
-                        watermark_desc = mockup_config.get("watermark_text")
+                        watermark_desc = cached_data.get("watermark_text")
                         final_mockup_with_wm = add_watermark(final_mockup, watermark_desc, WATERMARK_DIR, FONT_FILE)
                         
-                        # 6. TẠO TÊN FILE, EXIF VÀ LƯU VÀO BỘ NHỚ
                         base_filename = os.path.splitext(filename)[0]
                         cleaned_title = clean_title(base_filename, title_clean_keywords)
-                        prefix = mockup_config.get("title_prefix_to_add", "")
-                        suffix = mockup_config.get("title_suffix_to_add", "")
+                        prefix = cached_data.get("title_prefix_to_add", "")
+                        suffix = cached_data.get("title_suffix_to_add", "")
                         
                         final_filename_base = f"{prefix} {cleaned_title} {suffix}".strip().replace('  ', ' ')
                         ext = f".{output_format}"
@@ -262,7 +258,7 @@ def main():
                 print(f"❌ Lỗi nghiêm trọng khi xử lý file {filename}: {e}")
                 consecutive_error_count += 1
                 if consecutive_error_count >= ERROR_THRESHOLD:
-                    print(f"  - ❌ Lỗi: Đã có {consecutive_error_count} lỗi nghiêm trọng liên tiếp. Dừng xử lý file '{txt_filename}'.")
+                    print(f"  - ❌ Lỗi: Đã có {consecutive_error_count} lỗi nghiêm trọng. Dừng xử lý file '{txt_filename}'.")
                     break
 
         # --- LƯU KẾT QUẢ CHO FILE .TXT HIỆN TẠI ---
@@ -277,7 +273,7 @@ def main():
                 for filename, data in image_list:
                     with open(os.path.join(output_path, filename), 'wb') as f:
                         f.write(data)
-        # <<< THÊM MỚI: HỎI VÀ XÓA FILE INPUT ĐÃ XONG >>>
+
         print("-" * 50)
         choice = input(f"Xử lý file '{txt_filename}' hoàn tất. Xóa file này? (Enter = XÓA, 'n' = Giữ lại): ")
         if choice.lower() != 'n':

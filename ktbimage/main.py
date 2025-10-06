@@ -31,7 +31,6 @@ from utils.file_io import (
     clean_title,
     pre_clean_filename,
     should_globally_skip,
-    _convert_to_gps,
     create_exif_data,
     update_total_image_count,
     find_mockup_image,
@@ -80,16 +79,16 @@ def commit_and_push_changes_locally():
     print("🚀 Bắt đầu quá trình commit và push...")
     try:
         os.chdir(PROJECT_ROOT)
-        subprocess.run(['git', 'add', '.'], check=True)
+        subprocess.run(['git', 'add', '.'], check=True, capture_output=True)
         status_output = subprocess.run(['git', 'status', '--porcelain'], capture_output=True, text=True).stdout.strip()
         if not status_output:
             print("✅ Không có thay đổi mới để commit.")
             return False
         commit_message = f"Update via ktbimage tool - {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}"
-        subprocess.run(['git', 'commit', '-m', commit_message], check=True)
+        subprocess.run(['git', 'commit', '-m', commit_message], check=True, capture_output=True)
         current_branch = subprocess.run(['git', 'rev-parse', '--abbrev-ref', 'HEAD'], capture_output=True, text=True, check=True).stdout.strip()
         print(f"   - Commit thành công. Bắt đầu push lên nhánh '{current_branch}'...")
-        subprocess.run(['git', 'push', 'origin', current_branch], check=True)
+        subprocess.run(['git', 'push', 'origin', current_branch], check=True, capture_output=True)
         print("✅ Push thành công.")
         return True
     except (subprocess.CalledProcessError, FileNotFoundError) as e:
@@ -122,23 +121,21 @@ def write_log(urls_summary):
                 f.write(f"Domain: {domain}\n")
                 if counts.get('processed_by_mockup'):
                     for mockup, count in sorted(counts['processed_by_mockup'].items()):
-                        f.write(f"  - {mockup}: {count} images\n")
-                f.write(f"  - Skipped (Global): {counts['skipped_global']} images\n")
-                f.write(f"  - Skipped (No Rule): {counts['skipped_no_rule']} images\n")
-                f.write(f"  - Skipped (Action/Error): {counts['skipped_by_rule']} images\n")
+                        f.write(f"  - Processed ({mockup}): {count} ảnh\n")
+                f.write(f"  - Skipped (Global Keyword): {counts['skipped_global']} ảnh\n")
+                f.write(f"  - Skipped (No Rule): {counts['skipped_no_rule']} ảnh\n")
+                f.write(f"  - Skipped (Rule/Error): {counts['skipped_by_rule']} ảnh\n")
                 if counts.get('skip_file_generated'):
                     f.write(f"  - Skip File -> ktbimg: {counts['skip_file_generated']}\n")
-                f.write(f"  - Total Processed URLs: {counts['total_to_process']}\n\n")
+                f.write(f"  - Total New URLs: {counts['total_to_process']} ảnh\n\n")
     print(f"✅ Generation summary saved to {GENERATE_LOG_FILE}")
 
-
-# --- HÀM MAIN CHÍNH (PHIÊN BẢN HOÀN CHỈNH CUỐI CÙNG) ---
+# --- HÀM MAIN CHÍNH ---
 def main():
     configs = load_config(CONFIG_FILE)
     if not configs: return
     
     defaults = configs.get("defaults", {})
-    # <<< SỬA LỖI: Định nghĩa output_mode ở đây >>>
     output_mode = defaults.get("ktbimage_output_mode", "zip")
     
     print(f"🚀 Bắt đầu quy trình tự động của KTB-IMAGE (Chế độ Output mặc định: {output_mode.upper()})")
@@ -171,15 +168,22 @@ def main():
     for domain, new_count in domains_to_process.items():
         print(f"\n==================== Bắt đầu xử lý {new_count} ảnh mới từ domain: {domain} ====================")
         
-        domain_config = domains_configs.get(domain, {})
-        # Lấy output_mode riêng của domain, nếu không có thì dùng output_mode chung
-        output_mode_domain = domain_config.get("output_mode", output_mode)
-        domain_rules = sorted(domain_config.get("rules", []), key=lambda x: len(x.get('pattern', '')), reverse=True)
+        domain_config = domains_configs.get(domain)
         
+        if isinstance(domain_config, dict):
+            output_mode_domain = domain_config.get("output_mode", output_mode)
+            domain_rules = sorted(domain_config.get("rules", []), key=lambda x: len(x.get('pattern', '')), reverse=True)
+        elif isinstance(domain_config, list):
+            output_mode_domain = output_mode 
+            domain_rules = sorted(domain_config, key=lambda x: len(x.get('pattern', '')), reverse=True)
+        else:
+            output_mode_domain = output_mode
+            domain_rules = []
+
         print(f"  - Chế độ output cho domain này: {output_mode_domain.upper()}")
 
         if not domain_rules:
-            print(f"  - ⚠️ Cảnh báo: Không tìm thấy quy tắc ('rules') cho domain '{domain}'. Bỏ qua."); continue
+            print(f"  - ⚠️ Cảnh báo: Không tìm thấy quy tắc cho domain '{domain}'."); continue
         
         try:
             with open(os.path.join(CRAWLER_DOMAIN_DIR, f"{domain}.txt"), 'r', encoding='utf-8') as f:
@@ -197,10 +201,8 @@ def main():
             filename = os.path.basename(url)
             print(f"\n--- Đang xử lý: {filename} ---")
             
-            # --- LOGIC SKIP ĐÃ ĐƯỢC KIỂM TRA LẠI ---
             if should_globally_skip(filename, global_skip_keywords):
                 skipped_global_count += 1 
-                # Không thêm vào skipped_urls_for_domain theo đúng yêu cầu của bạn
                 continue
             
             matched_rule = next((r for r in domain_rules if r.get("pattern", "") in filename), None)
@@ -213,59 +215,44 @@ def main():
             try:
                 img = download_image(url)
                 if not img:
-                    skipped_urls_for_domain.append(url);
-                    consecutive_error_count += 1
-                    skipped_by_rule_count += 1
+                    skipped_urls_for_domain.append(url); consecutive_error_count += 1; skipped_by_rule_count += 1
                     if consecutive_error_count >= ERROR_THRESHOLD:
                         print(f"  - ❌ Lỗi: Đã có {consecutive_error_count} lỗi tải ảnh liên tiếp. Bỏ qua các URL còn lại của domain {domain}.")
                         break
                     continue
                 consecutive_error_count = 0
                 
-                # --- QUY TRÌNH SỬA LỖI ---
-                
-                # BƯỚC 1: XÁC ĐỊNH MÀU NỀN TRƯỚC TIÊN (LOGIC THÔNG MINH CÓ FALLBACK)
-                sample_coords = matched_rule.get("color_sample_coords")
-                is_white = True # Mặc định
-                
-                # Trường hợp 1: Dùng logic mới nếu có color_sample_coords
-                if sample_coords:
-                    is_white = determine_color_from_sample_area(img, sample_coords)
-                # Trường hợp 2: Dùng logic fallback nếu không có
-                else:
-                    rect_coords_for_color = matched_rule.get("coords")
-                    if rect_coords_for_color:
-                        temp_crop = crop_by_coords(img, rect_coords_for_color)
-                        if temp_crop:
-                            try:
-                                pixel = temp_crop.getpixel((1, temp_crop.height - 2))
-                                is_white = sum(pixel[:3]) / 3 > 210
-                            except IndexError:
-                                is_white = True # Mặc định là trắng nếu ảnh crop quá nhỏ
-                
-                background_color = (255, 255, 255) if is_white else (0, 0, 0)
-                print(f"  - Màu nền được xác định là: {'Trắng' if is_white else 'Đen'}")
-
-                # BƯỚC 2: TẨY WATERMARK (NẾU CÓ) BẰNG MÀU NỀN VỪA TÌM ĐƯỢC
                 erase_zones = matched_rule.get("erase_zones")
                 if erase_zones:
-                    print("  - Tẩy watermark bằng màu nền...")
-                    img = erase_areas(img, erase_zones, background_color)
-
-                # BƯỚC 3: CÁC BƯỚC XỬ LÝ CÒN LẠI NHƯ CŨ
-                # Chọn đúng bộ tọa độ dựa trên màu đã xác định
-                rect_coords = None
-                if is_white and "coords_white" in matched_rule: rect_coords = matched_rule["coords_white"]
-                elif not is_white and "coords_black" in matched_rule: rect_coords = matched_rule["coords_black"]
-                else: rect_coords = matched_rule.get("coords")
+                    print("  - Tẩy watermark cũ trên ảnh gốc...")
+                    img = erase_areas(img, erase_zones)
+                
+                sample_coords = matched_rule.get("color_sample_coords")
+                angle = matched_rule.get("angle", 0)
+                is_white = True
+                
+                if sample_coords:
+                    is_white = determine_color_from_sample_area(img, sample_coords)
+                    print(f"  - Màu áo (từ ảnh gốc) là: {'Trắng' if is_white else 'Đen'}")
+                    rect_coords = matched_rule.get("coords_white") if is_white else matched_rule.get("coords_black")
+                    if not rect_coords: rect_coords = matched_rule.get("coords")
+                else:
+                    rect_coords = matched_rule.get("coords")
 
                 if not rect_coords:
                     print("  - ⏩ Bỏ qua: Không tìm thấy tọa độ phù hợp."); skipped_urls_for_domain.append(url); skipped_by_rule_count += 1; continue
                 
-                angle = matched_rule.get("angle", 0)
                 initial_crop = crop_by_coords(img, rect_coords)
                 if not initial_crop:
                     skipped_urls_for_domain.append(url); continue
+
+                if not sample_coords:
+                    try:
+                        pixel = initial_crop.getpixel((1, initial_crop.height - 2))
+                        is_white = sum(pixel[:3]) / 3 > defaults.get("color_detection_threshold", 128)
+                        print(f"  - Màu áo (từ ảnh crop) là: {'Trắng' if is_white else 'Đen'}")
+                    except IndexError:
+                        is_white = True
                 
                 if (matched_rule.get("skipWhite") and is_white) or (matched_rule.get("skipBlack") and not is_white):
                     print("  - ⏩ Bỏ qua theo quy tắc skip màu."); skipped_urls_for_domain.append(url); skipped_by_rule_count += 1; continue
@@ -319,7 +306,6 @@ def main():
                 skipped_urls_for_domain.append(url)
                 skipped_by_rule_count += 1
 
-        # LƯU KẾT QUẢ CỦA DOMAIN
         if images_for_domain:
             if output_mode_domain == 'zip':
                 for mockup_name, image_list in images_for_domain.items():
@@ -339,7 +325,6 @@ def main():
                     for filename, data in image_list:
                         with open(os.path.join(folder_path, filename), 'wb') as f: f.write(data)
 
-        # GHI FILE SKIP
         skip_file_name = None
         if skipped_urls_for_domain:
             if not os.path.exists(KTBIMG_INPUT_DIR): os.makedirs(KTBIMG_INPUT_DIR)
@@ -349,7 +334,6 @@ def main():
                 f.write('\n'.join(skipped_urls_for_domain))
             print(f"📝 Đã tạo file skip '{skip_file_name}' và đẩy vào Input của KTBIMG.")
         
-        # CẬP NHẬT BÁO CÁO
         urls_summary[domain] = {
             'processed_by_mockup': processed_by_mockup, 'skipped_global': skipped_global_count,
             'skipped_no_rule': skipped_no_rule_count, 'skipped_by_rule': skipped_by_rule_count,
@@ -358,7 +342,6 @@ def main():
         for mockup, count in processed_by_mockup.items():
             total_processed_this_run[mockup] = total_processed_this_run.get(mockup, 0) + count
 
-    # CÁC BƯỚC CUỐI CÙNG
     write_log(urls_summary)
     update_total_image_count(TOTAL_IMAGE_FILE, total_processed_this_run, "ktbimage")
     print("\n✅ Hoàn thành xử lý và ghi log.")
