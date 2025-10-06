@@ -274,48 +274,58 @@ def main():
                     print("  - ⏩ Bỏ qua: Quy tắc không chỉ định 'mockup_sets_to_use'."); skipped_urls_for_domain.append(url); skipped_by_rule_count += 1; continue
 
                 for mockup_name in mockup_names_to_use:
+                    # ... (Toàn bộ logic chọn mockup cũ và mới không đổi) ...
                     mockup_config = mockup_sets_config.get(mockup_name)
-                    
-                    if not mockup_config:
-                        print(f"  - ⚠️ Cảnh báo: Không tìm thấy định nghĩa cho mockup '{mockup_name}' trong config. Bỏ qua.")
-                        continue
-                    
-                    white_value = mockup_config.get("white")
-                    black_value = mockup_config.get("black")
-                    selected_white, selected_black = None, None
-
+                    if not mockup_config: print(f"  - ⚠️ Cảnh báo: Không tìm thấy định nghĩa cho mockup '{mockup_name}'. Bỏ qua."); continue
+                    white_value = mockup_config.get("white"); black_value = mockup_config.get("black"); selected_white, selected_black = None, None
                     if isinstance(white_value, list) and white_value: selected_white = random.choice(white_value)
                     elif isinstance(white_value, str): selected_white = {"file": white_value, "coords": mockup_config.get("coords")}
-                    
                     if isinstance(black_value, list) and black_value: selected_black = random.choice(black_value)
                     elif isinstance(black_value, str): selected_black = {"file": black_value, "coords": mockup_config.get("coords")}
-                    
                     mockup_data_to_use = selected_white if is_white else selected_black
-
-                    if not mockup_data_to_use:
-                        print(f"  - ⚠️ Cảnh báo: Mockup '{mockup_name}' không có tùy chọn cho màu {'trắng' if is_white else 'đen'}. Bỏ qua.")
-                        continue
-                        
-                    mockup_filename = mockup_data_to_use.get('file')
-                    mockup_coords = mockup_data_to_use.get('coords')
-
-                    if not mockup_filename or not mockup_coords:
-                        print(f"  - ⚠️ Cảnh báo: Cấu hình file/coords cho mockup '{mockup_name}' bị lỗi. Bỏ qua.")
-                        continue
-
-                    # <<< SỬA LỖI: Ghép đường dẫn trực tiếp, không dùng find_mockup_image nữa >>>
+                    if not mockup_data_to_use: print(f"  - ⚠️ Cảnh báo: Mockup '{mockup_name}' không có tùy chọn cho màu {'trắng' if is_white else 'đen'}. Bỏ qua."); continue
+                    mockup_filename = mockup_data_to_use.get('file'); mockup_coords = mockup_data_to_use.get('coords')
+                    if not mockup_filename or not mockup_coords: print(f"  - ⚠️ Cảnh báo: Cấu hình file/coords cho mockup '{mockup_name}' bị lỗi. Bỏ qua."); continue
                     mockup_path = os.path.join(MOCKUP_DIR, mockup_filename)
-                    
-                    if not os.path.exists(mockup_path):
-                        print(f"  - ⚠️ Cảnh báo: Không tìm thấy file ảnh mockup tại '{mockup_path}'. Bỏ qua.")
-                        continue
+                    if not os.path.exists(mockup_path): print(f"  - ⚠️ Cảnh báo: Không tìm thấy file ảnh mockup '{mockup_filename}'. Bỏ qua."); continue
                     
                     print(f"  - Áp dụng mockup: '{mockup_name}' (file: {mockup_filename})")
                     
+                    # <<< BẮT ĐẦU THÊM CÁC DÒNG GỠ LỖI >>>
+                    print("    DEBUG: Bắt đầu mở ảnh mockup...")
                     with Image.open(mockup_path) as mockup_img:
+                        print("    DEBUG: Mở ảnh mockup thành công. Bắt đầu ghép ảnh...")
                         final_mockup = apply_mockup(trimmed_img, mockup_img, mockup_coords)
+                        
+                        print("    DEBUG: Ghép ảnh thành công. Bắt đầu thêm watermark...")
                         watermark_desc = mockup_config.get("watermark_text")
                         final_mockup_with_wm = add_watermark(final_mockup, watermark_desc, WATERMARK_DIR, FONT_FILE)
+
+                    print("    DEBUG: Thêm watermark thành công. Bắt đầu tạo tên file...")
+                    base_filename = os.path.splitext(filename)[0]
+                    pre_clean_pattern = matched_rule.get("pre_clean_regex")
+                    if pre_clean_pattern:
+                        base_filename = pre_clean_filename(base_filename, pre_clean_pattern)
+                    cleaned_title = clean_title(base_filename, title_clean_keywords)
+                    prefix = mockup_config.get("title_prefix_to_add", "")
+                    suffix = mockup_config.get("title_suffix_to_add", "")
+                    final_filename_base = f"{prefix} {cleaned_title} {suffix}".strip().replace('  ', ' ')
+                    save_format, ext = ("WEBP", ".webp") if defaults.get("global_output_format", "webp") == "webp" else ("JPEG", ".jpg")
+                    final_filename = f"{final_filename_base}{ext}"
+                    
+                    print(f"    DEBUG: Tạo tên file thành công: {final_filename}. Bắt đầu tạo EXIF...")
+                    image_to_save = final_mockup_with_wm.convert('RGB')
+                    exif_bytes = create_exif_data(mockup_name, final_filename, exif_defaults)
+                    
+                    print("    DEBUG: Tạo EXIF thành công. Bắt đầu lưu ảnh vào bộ nhớ...")
+                    img_byte_arr = BytesIO()
+                    image_to_save.save(img_byte_arr, format=save_format, quality=90, exif=exif_bytes)
+                    
+                    print("    DEBUG: Lưu vào bộ nhớ thành công. Thêm dữ liệu vào danh sách chờ...")
+                    images_for_domain.setdefault(mockup_name, []).append((final_filename, img_byte_arr.getvalue()))
+                    processed_by_mockup[mockup_name] = processed_by_mockup.get(mockup_name, 0) + 1
+                    print("    DEBUG: Hoàn tất xử lý cho mockup này.")
+                    # <<< KẾT THÚC CÁC DÒNG GỠ LỖI >>>
             
             except Exception as e:
                 print(f"  - ❌ Lỗi nghiêm trọng khi xử lý ảnh {url}: {e}") 
