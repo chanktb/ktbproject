@@ -425,7 +425,7 @@
 					"mockup_sets_to_use": ["printiment"],
 					"coords_white": { "x": 292, "y": 479, "w": 377, "h": 503 },
 					"coords_black": { "x": 309, "y": 536, "w": 362, "h": 433 },
-					"erase_zones": [{ "x": 230, "y": 581, "w": 98, "h": 62 }],
+					"erase_zones": [{ "x": 230, "y": 581, "w": 98, "h": 62 }, { "x": 191, "y": 617, "w": 152, "h": 40 }],
 					"color_sample_coords": { "x": 604, "y": 440, "w": 42, "h": 25 }
 				},
                 {
