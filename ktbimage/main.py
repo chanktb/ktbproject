@@ -131,11 +131,13 @@ def write_log(urls_summary):
     print(f"✅ Generation summary saved to {GENERATE_LOG_FILE}")
 
 # --- HÀM MAIN CHÍNH ---
+# --- HÀM MAIN CHÍNH (PHIÊN BẢN HOÀN CHỈNH - HỖ TRỢ CẢ CONFIG CŨ & MỚI) ---
 def main():
     configs = load_config(CONFIG_FILE)
     if not configs: return
     
     defaults = configs.get("defaults", {})
+    # Lấy output mode mặc định từ config, nếu không có thì là 'zip'
     output_mode = defaults.get("ktbimage_output_mode", "zip")
     
     print(f"🚀 Bắt đầu quy trình tự động của KTB-IMAGE (Chế độ Output mặc định: {output_mode.upper()})")
@@ -168,22 +170,26 @@ def main():
     for domain, new_count in domains_to_process.items():
         print(f"\n==================== Bắt đầu xử lý {new_count} ảnh mới từ domain: {domain} ====================")
         
+        # --- LOGIC MỚI: TỰ ĐỘNG NHẬN DIỆN CẤU TRÚC CONFIG ---
         domain_config = domains_configs.get(domain)
         
         if isinstance(domain_config, dict):
+            print("  - Phát hiện cấu trúc config MỚI (object).")
             output_mode_domain = domain_config.get("output_mode", output_mode)
             domain_rules = sorted(domain_config.get("rules", []), key=lambda x: len(x.get('pattern', '')), reverse=True)
         elif isinstance(domain_config, list):
+            print("  - Phát hiện cấu trúc config CŨ (list).")
             output_mode_domain = output_mode 
             domain_rules = sorted(domain_config, key=lambda x: len(x.get('pattern', '')), reverse=True)
         else:
+            print(f"  - ⚠️ Cảnh báo: Cấu hình cho domain '{domain}' không hợp lệ. Sử dụng cài đặt mặc định.")
             output_mode_domain = output_mode
             domain_rules = []
-
+        
         print(f"  - Chế độ output cho domain này: {output_mode_domain.upper()}")
 
         if not domain_rules:
-            print(f"  - ⚠️ Cảnh báo: Không tìm thấy quy tắc cho domain '{domain}'."); continue
+            print(f"  - ⚠️ Cảnh báo: Không tìm thấy quy tắc cho domain '{domain}'. Bỏ qua."); continue
         
         try:
             with open(os.path.join(CRAWLER_DOMAIN_DIR, f"{domain}.txt"), 'r', encoding='utf-8') as f:
@@ -269,40 +275,50 @@ def main():
 
                 for mockup_name in mockup_names_to_use:
                     mockup_config = mockup_sets_config.get(mockup_name)
-                    if not mockup_config: print(f"  - ⚠️ Cảnh báo: Không tìm thấy config cho mockup '{mockup_name}'."); continue
                     
-                    mockup_path = find_mockup_image(MOCKUP_DIR, mockup_name, "white" if is_white else "black")
-                    if not mockup_path: print(f"  - ⚠️ Cảnh báo: Không tìm thấy file ảnh mockup cho '{mockup_name}'."); continue
+                    if not mockup_config:
+                        print(f"  - ⚠️ Cảnh báo: Không tìm thấy định nghĩa cho mockup '{mockup_name}' trong config. Bỏ qua.")
+                        continue
+                    
+                    white_value = mockup_config.get("white")
+                    black_value = mockup_config.get("black")
+                    selected_white, selected_black = None, None
+
+                    if isinstance(white_value, list) and white_value: selected_white = random.choice(white_value)
+                    elif isinstance(white_value, str): selected_white = {"file": white_value, "coords": mockup_config.get("coords")}
+                    
+                    if isinstance(black_value, list) and black_value: selected_black = random.choice(black_value)
+                    elif isinstance(black_value, str): selected_black = {"file": black_value, "coords": mockup_config.get("coords")}
+                    
+                    mockup_data_to_use = selected_white if is_white else selected_black
+
+                    if not mockup_data_to_use:
+                        print(f"  - ⚠️ Cảnh báo: Mockup '{mockup_name}' không có tùy chọn cho màu {'trắng' if is_white else 'đen'}. Bỏ qua.")
+                        continue
+                        
+                    mockup_filename = mockup_data_to_use.get('file')
+                    mockup_coords = mockup_data_to_use.get('coords')
+
+                    if not mockup_filename or not mockup_coords:
+                        print(f"  - ⚠️ Cảnh báo: Cấu hình file/coords cho mockup '{mockup_name}' bị lỗi. Bỏ qua.")
+                        continue
+
+                    # <<< SỬA LỖI: Ghép đường dẫn trực tiếp, không dùng find_mockup_image nữa >>>
+                    mockup_path = os.path.join(MOCKUP_DIR, mockup_filename)
+                    
+                    if not os.path.exists(mockup_path):
+                        print(f"  - ⚠️ Cảnh báo: Không tìm thấy file ảnh mockup tại '{mockup_path}'. Bỏ qua.")
+                        continue
+                    
+                    print(f"  - Áp dụng mockup: '{mockup_name}' (file: {mockup_filename})")
                     
                     with Image.open(mockup_path) as mockup_img:
-                        final_mockup = apply_mockup(trimmed_img, mockup_img, mockup_config.get("coords"))
+                        final_mockup = apply_mockup(trimmed_img, mockup_img, mockup_coords)
                         watermark_desc = mockup_config.get("watermark_text")
                         final_mockup_with_wm = add_watermark(final_mockup, watermark_desc, WATERMARK_DIR, FONT_FILE)
-
-                    base_filename = os.path.splitext(filename)[0]
-                    pre_clean_pattern = matched_rule.get("pre_clean_regex")
-                    if pre_clean_pattern:
-                        print(f"  - Áp dụng pre_clean_regex: '{pre_clean_pattern}'")
-                        base_filename = pre_clean_filename(base_filename, pre_clean_pattern)
-                    
-                    cleaned_title = clean_title(base_filename, title_clean_keywords)
-                    prefix = mockup_config.get("title_prefix_to_add", "")
-                    suffix = mockup_config.get("title_suffix_to_add", "")
-                    final_filename_base = f"{prefix} {cleaned_title} {suffix}".strip().replace('  ', ' ')
-                    save_format, ext = ("WEBP", ".webp") if defaults.get("global_output_format", "webp") == "webp" else ("JPEG", ".jpg")
-                    final_filename = f"{final_filename_base}{ext}"
-                    
-                    image_to_save = final_mockup_with_wm.convert('RGB')
-                    exif_bytes = create_exif_data(mockup_name, final_filename, exif_defaults)
-                    
-                    img_byte_arr = BytesIO()
-                    image_to_save.save(img_byte_arr, format=save_format, quality=90, exif=exif_bytes)
-                    
-                    images_for_domain.setdefault(mockup_name, []).append((final_filename, img_byte_arr.getvalue()))
-                    processed_by_mockup[mockup_name] = processed_by_mockup.get(mockup_name, 0) + 1
             
             except Exception as e:
-                print(f"  - ❌ Lỗi nghiêm trọng khi xử lý ảnh {url}: {e}")
+                print(f"  - ❌ Lỗi nghiêm trọng khi xử lý ảnh {url}: {e}") 
                 skipped_urls_for_domain.append(url)
                 skipped_by_rule_count += 1
 
