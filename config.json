@@ -87,9 +87,14 @@
             "title_suffix_to_add": "Shirts"
         },
         "ktbtee": {
-            "white": "ktbtee_white.webp",
-            "black": "ktbtee_black.webp",
-            "coords": { "x": 362, "y": 254, "w": 424, "h": 582 },
+            "white": [
+            { "file": "ktbtee_white.webp", "coords": { "x": 362, "y": 254, "w": 424, "h": 582 } },
+            { "file": "ktbtee_white_1.jpg", "coords": { "x": 358, "y": 240, "w": 469, "h": 583 } }
+        ],
+            "black": [
+            { "file": "ktbtee_black.webp", "coords": { "x": 362, "y": 254, "w": 424, "h": 582 } },
+            { "file": "ktbtee_black_1.jpg", "coords": { "x": 358, "y": 240, "w": 469, "h": 583 } }
+        ],
             "watermark_text": "ktbtee.png",
             "title_prefix_to_add": "Official",
             "title_suffix_to_add": "Tshirt Sweatshirt"
@@ -315,12 +320,21 @@
             ]
         },
         "capitoneshirt.com": {
+			"output_mode": "folder",
             "rules": [
                 {
 					"pattern": "-sweater.webp",
 					"action": "generate",
 					"mockup_sets_to_use": ["ktbtee"],
 					"coords": { "x": 287, "y": 246, "w": 421, "h": 494 }
+				},
+				{
+					"pattern": "-sweaterold.webp",
+					"action": "generate",
+					"mockup_sets_to_use": ["ktbtee"],
+					"coords_white": { "x": 456, "y": 495, "w": 481, "h": 509 },
+					"coords_black": { "x": 439, "y": 489, "w": 398, "h": 496 },
+					"angle": -4
 				},
                 {
 					"pattern": "-ornament.webp",
