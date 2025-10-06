@@ -674,6 +674,12 @@
 					"action": "generate",
 					"mockup_sets_to_use": ["ktbtee"],
 					"coords": { "x": 492, "y": 503, "w": 550, "h": 672 }
+				},
+                {
+					"pattern": "-Sweatshirt.jpg",
+					"action": "generate",
+					"mockup_sets_to_use": ["ktbtee"],
+					"coords": { "x": 512, "y": 479, "w": 559, "h": 691 }
 				}
             ]
         },
