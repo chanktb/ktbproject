@@ -550,7 +550,7 @@
                 {
 					"pattern": "-sweater.webp",
 					"action": "generate",
-					"mockup_sets_to_use": ["ktbtee"],
+					"mockup_sets_to_use": ["printiment"],
 					"coords": { "x": 319, "y": 214, "w": 370, "h": 405 },
 					"color_sample_coords": { "x": 295, "y": 884, "w": 17, "h": 15 },
 					"angle": -3,
@@ -559,7 +559,7 @@
                 {
 					"pattern": "-shirt.webp",
 					"action": "generate",
-					"mockup_sets_to_use": ["ktbtee"],
+					"mockup_sets_to_use": ["printiment"],
 					"coords": { "x": 312, "y": 419, "w": 345, "h": 425 },
 					"angle": 12
 				}
