@@ -334,6 +334,7 @@
 					"mockup_sets_to_use": ["ktbtee"],
 					"coords_white": { "x": 456, "y": 495, "w": 481, "h": 509 },
 					"coords_black": { "x": 439, "y": 489, "w": 398, "h": 496 },
+					"color_sample_coords": { "x": 311, "y": 610, "w": 17, "h": 38 },
 					"angle": -4
 				},
                 {

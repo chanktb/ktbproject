@@ -230,7 +230,7 @@ def main():
                         if temp_crop:
                             try:
                                 pixel = temp_crop.getpixel((1, temp_crop.height - 2))
-                                is_white = sum(pixel[:3]) / 3 > 210
+                                is_white = sum(pixel[:3]) / 3 > 128
                             except IndexError:
                                 is_white = True
                 
