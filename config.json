@@ -28,6 +28,7 @@
             "black-poster",
             "white-poster",
 			"long-sleeve",
+			"long-sleve",
             "poster-portrait",
             "Poster-Canvas",
             "ladies-tee",
@@ -71,17 +72,27 @@
     },
     "mockup_sets": {
         "printiment": {
-            "white": "printiment_white.jpg",
-            "black": "printiment_black.jpg",
-            "coords": { "x": 441, "y": 340, "w": 361, "h": 446 },
+            "white": [
+            { "file": "printiment_white.jpg", "coords": { "x": 441, "y": 340, "w": 361, "h": 446 } },
+            { "file": "printiment_white_1.jpg", "coords": { "x": 309, "y": 256, "w": 386, "h": 445 } }
+        ],
+            "black": [
+            { "file": "printiment_black.jpg", "coords": { "x": 441, "y": 340, "w": 361, "h": 446 } },
+            { "file": "printiment_black_1.jpg", "coords": { "x": 309, "y": 256, "w": 386, "h": 445 } }
+        ],
             "watermark_text": "printiment.png",
             "title_prefix_to_add": "",
             "title_suffix_to_add": "Tshirts Sweater Hoodie"
         },
         "whatwillwear": {
-            "white": "whatwillwear_white.jpg",
-            "black": "whatwillwear_black.jpg",
-            "coords": { "x": 309, "y": 256, "w": 386, "h": 445 },
+            "white": [
+            { "file": "whatwillwear_white.jpg", "coords": { "x": 309, "y": 256, "w": 386, "h": 445 } },
+            { "file": "whatwillwear_white_1.jpg", "coords": { "x": 376, "y": 305, "w": 416, "h": 533 } }
+        ],
+            "black": [
+            { "file": "whatwillwear_black.jpg", "coords": { "x": 309, "y": 256, "w": 386, "h": 445 } },
+            { "file": "whatwillwear_black_1.jpg", "coords": { "x": 376, "y": 305, "w": 416, "h": 533 } }
+        ],
             "watermark_text": "whatwillwear.png",
             "title_prefix_to_add": "",
             "title_suffix_to_add": "Shirts"
@@ -100,9 +111,14 @@
             "title_suffix_to_add": "Tshirt Sweatshirt"
         },
         "albumcoverprint": {
-            "white": "albumcoverprint_white.jpg",
-            "black": "albumcoverprint_black.jpg",
-            "coords": { "x": 358, "y": 240, "w": 469, "h": 583 },
+            "white": [
+            { "file": "albumcoverprint_white.jpg", "coords": { "x": 358, "y": 240, "w": 469, "h": 583 } },
+            { "file": "albumcoverprint_white_1.jpg", "coords": { "x": 378, "y": 278, "w": 413, "h": 525 } }
+        ],
+            "black": [
+            { "file": "albumcoverprint_black.jpg", "coords": { "x": 358, "y": 240, "w": 469, "h": 583 } },
+            { "file": "albumcoverprint_black_1.jpg", "coords": { "x": 378, "y": 278, "w": 413, "h": 525 } }
+        ],
             "watermark_text": "albumcoverprint.png",
             "title_prefix_to_add": "Original",
             "title_suffix_to_add": "T Shirt Sweater"
