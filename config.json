@@ -323,13 +323,13 @@
 			"output_mode": "folder",
             "rules": [
                 {
-					"pattern": "-sweater.webp",
+					"pattern": "-sweaterold.webp",
 					"action": "generate",
 					"mockup_sets_to_use": ["ktbtee"],
 					"coords": { "x": 287, "y": 246, "w": 421, "h": 494 }
 				},
 				{
-					"pattern": "-sweaterold.webp",
+					"pattern": "-sweater.webp",
 					"action": "generate",
 					"mockup_sets_to_use": ["ktbtee"],
 					"coords_white": { "x": 456, "y": 495, "w": 481, "h": 509 },
@@ -550,7 +550,7 @@
                 {
 					"pattern": "-sweater.webp",
 					"action": "generate",
-					"mockup_sets_to_use": ["printiment"],
+					"mockup_sets_to_use": ["ktbtee"],
 					"coords": { "x": 319, "y": 214, "w": 370, "h": 405 },
 					"color_sample_coords": { "x": 295, "y": 884, "w": 17, "h": 15 },
 					"angle": -3,
@@ -559,7 +559,7 @@
                 {
 					"pattern": "-shirt.webp",
 					"action": "generate",
-					"mockup_sets_to_use": ["printiment"],
+					"mockup_sets_to_use": ["ktbtee"],
 					"coords": { "x": 312, "y": 419, "w": 345, "h": 425 },
 					"angle": 12
 				}
