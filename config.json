@@ -600,7 +600,7 @@
 					"action": "generate",
 					"mockup_sets_to_use": ["albumcoverprint"],
 					"coords_white": { "x": 183, "y": 163, "w": 383, "h": 528 },
-					"coords_black": { "x": 145, "y": 159, "w": 422, "h": 579 },
+					"coords_black": { "x": 183, "y": 163, "w": 383, "h": 528 },
 					"color_sample_coords": { "x": 539, "y": 72, "w": 53, "h": 28 }
 				},
 				{
