@@ -807,6 +807,12 @@
 					"action": "generate",
 					"mockup_sets_to_use": ["printiment"],
 					"coords": { "x": 205, "y": 137, "w": 362, "h": 409 }
+				},
+				{
+					"pattern": "-T-Shirt.jpg",
+					"action": "generate",
+					"mockup_sets_to_use": ["printiment"],
+					"coords": { "x": 325, "y": 248, "w": 453, "h": 545 }
 				}
             ]
         }
