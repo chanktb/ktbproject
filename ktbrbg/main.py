@@ -11,6 +11,8 @@ import os
 import subprocess
 from datetime import datetime
 from PIL import Image
+import numpy as np
+import cv2
 
 # Import các hàm dùng chung từ thư mục utils
 # Giả định script này được chạy từ thư mục gốc của ktbproject
@@ -29,6 +31,27 @@ REFINE_TARGET_SIZE = 10000 # Độ phân giải mục tiêu để tinh chỉnh v
 # ==============================================================================
 # HẾT PHẦN CẤU HÌNH
 # ==============================================================================
+def create_hybrid_soft_mask(sharp_mask_cv, blur_ksize=15, erosion_ksize=5):
+    """
+    Tạo mặt nạ lai: Lõi 100% đặc, viền mềm mại.
+    - blur_ksize: Độ rộng và độ mềm của viền. Càng lớn càng mềm.
+    - erosion_ksize: Độ dày của phần lõi đặc. Càng lớn lõi càng nhỏ.
+    """
+    print(f"✨ Tạo mặt nạ lai (Blur: {blur_ksize}px, Erosion: {erosion_ksize}px)...")
+    
+    # 1. Tạo mặt nạ viền mềm (như cũ)
+    blur_kernel = (blur_ksize if blur_ksize % 2 != 0 else blur_ksize + 1, ) * 2
+    blurred_mask = cv2.GaussianBlur(sharp_mask_cv, blur_kernel, 0)
+    
+    # 2. Tạo mặt nạ lõi bằng cách "ăn mòn" (co nhỏ) mặt nạ sắc nét
+    erosion_kernel = np.ones((erosion_ksize, erosion_ksize), np.uint8)
+    core_mask = cv2.erode(sharp_mask_cv, erosion_kernel, iterations=1)
+    
+    # 3. Kết hợp: Lấy mặt nạ mờ làm nền, sau đó dán phần lõi đặc lên
+    hybrid_mask = blurred_mask.copy()
+    hybrid_mask[core_mask == 255] = 255
+    
+    return hybrid_mask
 
 def git_push_results():
     """Tự động thêm, commit và push các kết quả lên GitHub."""
@@ -60,7 +83,7 @@ def git_push_results():
 
 def process_image(input_path, output_path, magicwand_tolerance):
     """
-    Quy trình xử lý ảnh chính, tận dụng các hàm từ utils.
+    Quy trình xử lý ảnh chính, sử dụng kỹ thuật mặt nạ lai.
     """
     print(f"🚀 Bắt đầu xử lý file: {os.path.basename(input_path)} với Tolerance = {magicwand_tolerance}")
     
@@ -70,52 +93,57 @@ def process_image(input_path, output_path, magicwand_tolerance):
         print(f"❌ Lỗi: Không thể đọc file ảnh {input_path}: {e}")
         return
 
-    # --- Bước 1, 2 & 3: Tách nền, Tinh chỉnh viền và Làm nét (Gói gọn trong 1 hàm) ---
-    # Hàm remove_background_advanced đã bao gồm cả 3 bước này.
-    processed_design = remove_background_advanced(
-        original_image,
-        tolerance=magicwand_tolerance,
-        refine_size=REFINE_TARGET_SIZE
-    )
-    print("✅ Tách nền, tinh chỉnh và làm nét thành công.")
-
-    # --- Bước 4: Cắt gọn nền trong suốt thừa ---
-    # Sử dụng hàm trim_transparent_background từ utils để thay thế logic cv2.boundingRect
+    # Bước 1 & 2: Tách nền và cắt gọn (giữ nguyên)
+    processed_design = remove_background_advanced(original_image, tolerance=magicwand_tolerance, refine_size=REFINE_TARGET_SIZE)
     trimmed_design = trim_transparent_background(processed_design)
     if not trimmed_design:
         print("❌ Lỗi: Không tìm thấy đối tượng sau khi tách nền.")
         return
-    print(f"✅ Cắt gọn đối tượng. Kích thước gốc: {trimmed_design.width}x{trimmed_design.height}px")
+    print(f"✅ Tách nền và cắt gọn thành công.")
 
-    # --- Bước 5: Scale ảnh để vừa vào canvas (Đã loại bỏ padding) ---
-    img_w, img_h = trimmed_design.size
-    if img_w == 0 or img_h == 0:
-        print("❌ Lỗi: Kích thước ảnh sau khi cắt không hợp lệ.")
-        return
+    # <<< BƯỚC MỚI: TẠO MẶT NẠ LAI VÀ ÁP DỤNG >>>
+    try:
+        rgb_channels = trimmed_design.convert("RGB")
+        sharp_alpha_channel = trimmed_design.split()[3]
+        sharp_alpha_cv = np.array(sharp_alpha_channel)
+        
+        # Gọi hàm tạo mặt nạ lai mới
+        hybrid_mask_cv = create_hybrid_soft_mask(
+            sharp_alpha_cv, 
+            blur_ksize=7,    # Điều chỉnh độ mềm của viền
+            erosion_ksize=5   # Điều chỉnh độ dày của lõi
+        )
+        
+        hybrid_mask_pil = Image.fromarray(hybrid_mask_cv)
+        
+        final_design = rgb_channels.copy()
+        final_design.putalpha(hybrid_mask_pil)
 
+    except Exception as e:
+        print(f"⚠️ Cảnh báo: Lỗi khi tạo mặt nạ lai, sử dụng ảnh gốc. Lỗi: {e}")
+        final_design = trimmed_design
+
+    # --- Các bước còn lại sử dụng 'final_design' với viền mềm và lõi đặc ---
+    
+    # Bước 4: Scale ảnh
+    # ... (phần code scale giữ nguyên như cũ) ...
+    img_w, img_h = final_design.size
     img_aspect_ratio = img_w / img_h
     canvas_aspect_ratio = CANVAS_WIDTH / CANVAS_HEIGHT
-    
     if img_aspect_ratio > canvas_aspect_ratio:
         target_w = CANVAS_WIDTH
         target_h = int(target_w / img_aspect_ratio)
     else:
         target_h = CANVAS_HEIGHT
         target_w = int(target_h * img_aspect_ratio)
-        
-    scaled_image = trimmed_design.resize((target_w, target_h), Image.Resampling.LANCZOS)
+    scaled_image = final_design.resize((target_w, target_h), Image.Resampling.LANCZOS)
     print(f"✅ Scale ảnh. Kích thước mới: {target_w}x{target_h}px")
-    
-    # --- Bước 6: Đặt vào khung (Canvas) ---
+
+    # Bước 5 & 6: Đặt vào khung và Lưu
     canvas = Image.new('RGBA', (CANVAS_WIDTH, CANVAS_HEIGHT), (0, 0, 0, 0))
     paste_x = (CANVAS_WIDTH - target_w) // 2
-    paste_y = 0 # Dán lên trên cùng vì không còn PADDING_TOP
-    
-    print(f"🎨 Căn giữa và dán ảnh tại tọa độ (X, Y): ({paste_x}, {paste_y})")
+    paste_y = 0
     canvas.paste(scaled_image, (paste_x, paste_y), mask=scaled_image)
-    print(f"✅ Đặt thiết kế vào khung thành công.")
-
-    # --- Bước 7: Lưu ảnh cuối cùng ---
     canvas.save(output_path, 'PNG', dpi=(TARGET_DPI, TARGET_DPI))
     print(f"🎉 Hoàn thành! File đã được lưu tại: {output_path}")
     print("-" * 50)
