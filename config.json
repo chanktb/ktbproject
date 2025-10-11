@@ -577,7 +577,7 @@
 					"pattern": "-shirt.webp",
 					"action": "generate",
 					"mockup_sets_to_use": ["ktbtee"],
-					"coords": { "x": 312, "y": 419, "w": 345, "h": 425 },
+					"coords": { "x": 277, "y": 401, "w": 402, "h": 458 },
 					"angle": 12
 				}
             ]
