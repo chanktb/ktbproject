@@ -39,6 +39,7 @@
             "White-Ornaments",
 			"ornament-white",
 			"white-shirt",
+			"Mens-White-Tee",
             "classic-mens",
             "men-shirt",
             "sweatshirt",
@@ -55,6 +56,7 @@
             "Original",
             "Originals",
             "Unisex",
+			"Blackshirt",
             "mug",
 			"shirt0"
         ],
@@ -200,7 +202,21 @@
 					"pattern": "-T-Shirt.jpg",
 					"action": "generate",
 					"mockup_sets_to_use": ["amertee"],
-					"coords": { "x": 202, "y": 232, "w": 456, "h": 570 }
+					"coords": { "x": 204, "y": 196, "w": 432, "h": 504 }
+				},
+				{
+					"pattern": "-T-shirt.jpg",
+					"action": "generate",
+					"mockup_sets_to_use": ["amertee"],
+					"coords": { "x": 204, "y": 196, "w": 432, "h": 504 }
+				},
+				{
+					"pattern": "-poster.jpg",
+					"action": "generate",
+					"mockup_sets_to_use": ["amertee"],
+					"coords_white": { "x": 231, "y": 161, "w": 333, "h": 473 },
+					"coords_black": { "x": 320, "y": 173, "w": 336, "h": 446 },
+					"color_sample_coords": { "x": 554, "y": 162, "w": 10, "h": 5 }
 				}
             ]
         },
@@ -209,21 +225,27 @@
             "rules": [
                 {
 					"pattern": "-shirt.jpg",
-					"action": "generate",
+					"action": "skip",
 					"mockup_sets_to_use": ["whatwillwear"],
 					"coords": { "x": 250, "y": 176, "w": 314, "h": 422 }
 				},
 				{
 					"pattern": "-T-shirts-Shirt.jpg",
-					"action": "generate",
+					"action": "skip",
 					"mockup_sets_to_use": ["whatwillwear"],
 					"coords": { "x": 242, "y": 155, "w": 333, "h": 430 }
 				},
 				{
 					"pattern": "-T-Shirts-Shirt.jpg",
-					"action": "generate",
+					"action": "skip",
 					"mockup_sets_to_use": ["whatwillwear"],
 					"coords": { "x": 242, "y": 155, "w": 333, "h": 430 }
+				},
+				{
+					"pattern": "-ornament.jpg",
+					"action": "generate",
+					"mockup_sets_to_use": ["whatwillwear"],
+					"coords": { "x": 229, "y": 285, "w": 281, "h": 356 }
 				}
             ]
         },
@@ -336,17 +358,17 @@
             ]
         },
         "capitoneshirt.com": {
-			"output_mode": "folder",
+			"output_mode": "zip",
             "rules": [
                 {
 					"pattern": "-sweaterold.webp",
-					"action": "generate",
+					"action": "skip",
 					"mockup_sets_to_use": ["ktbtee"],
 					"coords": { "x": 287, "y": 246, "w": 421, "h": 494 }
 				},
 				{
 					"pattern": "-sweater.webp",
-					"action": "generate",
+					"action": "skip",
 					"mockup_sets_to_use": ["ktbtee"],
 					"coords_white": { "x": 456, "y": 495, "w": 481, "h": 509 },
 					"coords_black": { "x": 439, "y": 489, "w": 398, "h": 496 },
@@ -578,6 +600,7 @@
 					"action": "generate",
 					"mockup_sets_to_use": ["ktbtee"],
 					"coords": { "x": 277, "y": 401, "w": 402, "h": 458 },
+					"erase_zones": [{ "x": 265, "y": 389, "w": 35, "h": 219 }, { "x": 637, "y": 771, "w": 76, "h": 126 }],
 					"angle": 12
 				}
             ]
@@ -593,11 +616,11 @@
             ]
         },
         "serenashirt.com": {
-			"output_mode": "folder",
+			"output_mode": "zip",
             "rules": [
                 {
 					"pattern": "-sweater.jpg",
-					"action": "generate",
+					"action": "skip",
 					"mockup_sets_to_use": ["albumcoverprint"],
 					"coords_white": { "x": 167, "y": 161, "w": 405, "h": 531 },
 					"coords_black": { "x": 183, "y": 163, "w": 383, "h": 528 },
@@ -605,7 +628,7 @@
 				},
 				{
 					"pattern": "-sweaterold.jpg",
-					"action": "generate",
+					"action": "skip",
 					"mockup_sets_to_use": ["albumcoverprint"],
 					"coords": { "x": 208, "y": 241, "w": 327, "h": 403 }
 				},
@@ -639,11 +662,11 @@
             ]
         },
         "teehandus.com": {
-			"output_mode": "folder",
+			"output_mode": "zip",
             "rules": [
                 {
 					"pattern": "-Sweater.jpg",
-					"action": "generate",
+					"action": "skip",
 					"mockup_sets_to_use": ["albumcoverprint"],
 					"coords_white": { "x": 282, "y": 237, "w": 419, "h": 533 },
 					"coords_black": { "x": 282, "y": 237, "w": 419, "h": 533 },
@@ -651,7 +674,7 @@
 				},
                 {
 					"pattern": "-sweater.jpg",
-					"action": "generate",
+					"action": "skip",
 					"mockup_sets_to_use": ["albumcoverprint"],
 					"coords_white": { "x": 80, "y": 204, "w": 341, "h": 409 },
 					"coords_black": { "x": 95, "y": 204, "w": 318, "h": 392 },
@@ -666,7 +689,7 @@
                 {
 					"pattern": "-Ceramic-Ornament-Ceramic-Mug-Poster-and-Classic-Dad-Cap.jpg",
 					"action": "generate",
-					"mockup_sets_to_use": ["amertee"],
+					"mockup_sets_to_use": ["printiment"],
 					"coords_white": { "x": 117, "y": 741, "w": 286, "h": 449 },
 					"coords_black": { "x": 102, "y": 753, "w": 315, "h": 434 },
 					"color_sample_coords": { "x": 758, "y": 1056, "w": 36, "h": 22 }
@@ -674,14 +697,14 @@
                 {
 					"pattern": "-ornament-ornament.jpg",
 					"action": "generate",
-					"mockup_sets_to_use": ["amertee", "ktbtee"],
+					"mockup_sets_to_use": ["printiment"],
 					"coords": { "x": 274, "y": 332, "w": 434, "h": 546 },
 					"color_sample_coords": { "x": 377, "y": 271, "w": 40, "h": 27 }
 				},
                 {
 					"pattern": "-ornament-ornament-white.jpg",
 					"action": "generate",
-					"mockup_sets_to_use": ["amertee", "ktbtee"],
+					"mockup_sets_to_use": ["printiment"],
 					"coords": { "x": 255, "y": 294, "w": 481, "h": 599 },
 					"color_sample_coords": { "x": 375, "y": 250, "w": 55, "h": 21 }
 				}
@@ -789,7 +812,7 @@
             ]
         },
         "nemoshirt.com": {
-			"output_mode": "folder",
+			"output_mode": "zip",
             "rules": [
                 {
 					"pattern": "-Mens-White-Tee.jpg",
@@ -806,7 +829,7 @@
             ]
         },
         "readyoctober.com": {
-			"output_mode": "folder",
+			"output_mode": "zip",
             "rules": [
                 {
 					"pattern": "-Sweater.jpg",
