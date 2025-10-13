@@ -157,7 +157,7 @@
                 {
 					"pattern": "-white-poster.jpg",
 					"action": "generate",
-					"mockup_sets_to_use": ["ktbtee"],
+					"mockup_sets_to_use": ["printiment"],
 					"coords": { "x": 409, "y": 206, "w": 970, "h": 1384 }
 				},
                 {
@@ -468,7 +468,7 @@
             ]
         },
         "dalatshirt.com": {
-			"output_mode": "zip",
+			"output_mode": "folder",
             "rules": [
                 {
 					"pattern": "-mug.jpg",
@@ -481,7 +481,7 @@
 				},
                 {
 					"pattern": "-Longsleeve-Shirt.jpg",
-					"action": "generate",
+					"action": "skip",
 					"mockup_sets_to_use": ["printiment"],
 					"coords_white": { "x": 292, "y": 479, "w": 377, "h": 503 },
 					"coords_black": { "x": 309, "y": 536, "w": 362, "h": 433 },
@@ -489,7 +489,7 @@
 					"color_sample_coords": { "x": 604, "y": 440, "w": 42, "h": 25 }
 				},
                 {
-					"pattern": "-T-shirts-Shirt.jpg",
+					"pattern": "-Shirt.jpg",
 					"action": "generate",
 					"mockup_sets_to_use": ["printiment"],
 					"coords": { "x": 404, "y": 146, "w": 319, "h": 405 }
