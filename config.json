@@ -245,7 +245,9 @@
 					"pattern": "-ornament.jpg",
 					"action": "generate",
 					"mockup_sets_to_use": ["whatwillwear"],
-					"coords": { "x": 229, "y": 285, "w": 281, "h": 356 }
+					"coords_white": { "x": 229, "y": 285, "w": 281, "h": 356 },
+					"coords_black": { "x": 211, "y": 182, "w": 358, "h": 438 },
+					"color_sample_coords": { "x": 364, "y": 674, "w": 20, "h": 7 }
 				}
             ]
         },
@@ -544,6 +546,12 @@
 					"mockup_sets_to_use": ["ktbtee"],
 					"coords": { "x": 330, "y": 356, "w": 385, "h": 534 },
 					"skipBlack": true
+				},
+				{
+					"pattern": "-shirtblack.jpg",
+					"action": "skip",
+					"mockup_sets_to_use": ["ktbtee"],
+					"coords": { "x": 320, "y": 356, "w": 388, "h": 503 }
 				},
                 {
 					"pattern": "-sweater.jpg",
