@@ -197,6 +197,7 @@
             ]
         },
         "techteesusa.com": {
+			"output_mode": "folder",
             "rules": [
                 {
 					"pattern": "-T-Shirt.jpg",
