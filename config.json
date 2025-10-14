@@ -518,6 +518,14 @@
 					"coords_white": { "x": 317, "y": 206, "w": 364, "h": 460 },
 					"coords_black": { "x": 295, "y": 210, "w": 372, "h": 506 },
 					"color_sample_coords": { "x": 462, "y": 740, "w": 60, "h": 36 }
+				},
+                {
+					"pattern": "-Shirt.jpg",
+					"action": "generate",
+					"mockup_sets_to_use": ["albumcoverprint"],
+					"coords_white": { "x": 301, "y": 595, "w": 437, "h": 552 },
+					"coords_black": { "x": 231, "y": 455, "w": 497, "h": 562 },
+					"color_sample_coords": { "x": 477, "y": 1195, "w": 65, "h": 18 }
 				}
             ]
         },
