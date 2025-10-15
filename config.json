@@ -553,14 +553,14 @@
 					"pattern": "-shirt.jpg",
 					"action": "generate",
 					"mockup_sets_to_use": ["ktbtee", "whatwillwear", "amertee", "albumcoverprint"],
-					"coords": { "x": 330, "y": 356, "w": 385, "h": 534 },
-					"skipBlack": true
+					"coords": { "x": 330, "y": 356, "w": 385, "h": 534 }
 				},
 				{
 					"pattern": "-shirtblack.jpg",
 					"action": "skip",
 					"mockup_sets_to_use": ["ktbtee", "whatwillwear", "amertee", "albumcoverprint"],
-					"coords": { "x": 320, "y": 356, "w": 388, "h": 503 }
+					"coords": { "x": 320, "y": 356, "w": 388, "h": 503 },
+					"skipBlack": true
 				},
                 {
 					"pattern": "-sweater.jpg",
