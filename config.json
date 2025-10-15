@@ -45,6 +45,7 @@
             "sweatshirt",
             "t-shirts",
             "t-shirt",
+			"Shirt-Black0",
             "tshirt",
             "Ladies",
             "sweater",
@@ -783,6 +784,12 @@
 					"mockup_sets_to_use": ["ktbtee", "whatwillwear", "amertee", "albumcoverprint"],
 					"coords": { "x": 359, "y": 353, "w": 313, "h": 392 },
 					"erase_zones": [{ "x": 358, "y": 345, "w": 52, "h": 23 }]
+				},
+				{
+					"pattern": "-Shirt-Black0.jpg",
+					"action": "generate",
+					"mockup_sets_to_use": ["ktbtee", "whatwillwear", "amertee", "albumcoverprint"],
+					"coords": { "x": 238, "y": 243, "w": 393, "h": 476 }
 				}
             ]
         },
