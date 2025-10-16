@@ -198,7 +198,7 @@
             ]
         },
         "techteesusa.com": {
-			"output_mode": "folder",
+			"output_mode": "zip",
             "rules": [
                 {
 					"pattern": "-T-Shirt.jpg",
@@ -223,7 +223,7 @@
             ]
         },
         "teleteeshirt.com": {
-			"output_mode": "folder",
+			"output_mode": "zip",
             "rules": [
                 {
 					"pattern": "-shirt.jpg",
@@ -669,7 +669,7 @@
             ]
         },
         "mercuryshirt.com": {
-			"output_mode": "folder",
+			"output_mode": "zip",
             "rules": [
                 {
 					"pattern": "-shirt.jpg",
