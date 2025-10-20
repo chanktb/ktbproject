@@ -640,8 +640,8 @@
 					"pattern": "-sweater.jpg",
 					"action": "skip",
 					"mockup_sets_to_use": ["ktbtee", "whatwillwear", "amertee", "albumcoverprint"],
-					"coords_white": { "x": 167, "y": 161, "w": 405, "h": 531 },
-					"coords_black": { "x": 183, "y": 163, "w": 383, "h": 528 },
+					"coords_white": { "x": 139, "y": 160, "w": 433, "h": 579 },
+					"coords_black": { "x": 139, "y": 160, "w": 433, "h": 579 },
 					"color_sample_coords": { "x": 539, "y": 72, "w": 53, "h": 28 }
 				},
 				{
