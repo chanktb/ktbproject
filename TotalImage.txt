@@ -1,7 +1,7 @@
 Timestamp: 2025-10-20
 
-ktbimage.albumcoverprint: 730
-ktbimage.amertee: 730
-ktbimage.ktbtee: 730
+ktbimage.albumcoverprint: 1368
+ktbimage.amertee: 1368
+ktbimage.ktbtee: 1368
 ktbimage.printiment: 224
-ktbimage.whatwillwear: 730
+ktbimage.whatwillwear: 1368
