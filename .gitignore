@@ -13,7 +13,6 @@
 
 **/InputImage/
 **/OutputImage/
-**/TotalImage.txt
 
 *.zip
 generate.log
