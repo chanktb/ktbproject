@@ -144,7 +144,7 @@ def main():
 
     if not os.path.exists(OUTPUT_DIR): os.makedirs(OUTPUT_DIR)
     
-    cleanup_old_zips()
+    #cleanup_old_zips()
 
     domains_configs = configs.get("domains", {})
     mockup_sets_config = configs.get("mockup_sets", {})
