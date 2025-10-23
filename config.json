@@ -303,6 +303,12 @@
 					"coords": { "x": 293, "y": 237, "w": 359, "h": 431 },
 					"color_sample_coords": { "x": 792, "y": 812, "w": 28, "h": 25 },
 					"skipWhite": true
+				},
+                {
+					"pattern": "-T-shirt.jpg",
+					"action": "generate",
+					"mockup_sets_to_use": ["amertee"],
+					"coords": { "x": 267, "y": 179, "w": 386, "h": 458 }
 				}
             ]
         },
