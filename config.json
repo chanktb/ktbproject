@@ -203,7 +203,7 @@
             ]
         },
         "techteesusa.com": {
-			"output_mode": "zip",
+			"output_mode": "folder",
             "rules": [
                 {
 					"pattern": "-T-Shirt.jpg",
