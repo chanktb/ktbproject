@@ -327,11 +327,30 @@ def main():
             if output_mode_domain == 'zip':
                 for mockup_name, image_list in images_for_domain.items():
                     now = datetime.now(pytz.timezone('Asia/Ho_Chi_Minh'))
-                    zip_filename = f"{mockup_name}.{domain.split('.')[0]}.{now.strftime('%Y%m%d_%H%M%S')}.{len(image_list)}.zip"
-                    zip_path = os.path.join(OUTPUT_DIR, zip_filename)
-                    print(f"📦 Đang tạo file zip: {zip_path}")
-                    with zipfile.ZipFile(zip_path, 'w') as zf:
-                        for filename, data in image_list: zf.writestr(filename, data)
+                    
+                    # 1. Tạo tên file TẠM và tên file CUỐI CÙNG
+                    base_filename = f"{mockup_name}.{domain.split('.')[0]}.{now.strftime('%Y%m%d_%H%M%S')}.{len(image_list)}"
+                    zip_filename_final = f"{base_filename}.zip"
+                    zip_filename_tmp = f"{base_filename}.zip.tmp" # <-- File tạm
+                    
+                    zip_path_final = os.path.join(OUTPUT_DIR, zip_filename_final)
+                    zip_path_tmp = os.path.join(OUTPUT_DIR, zip_filename_tmp) # <-- Đường dẫn tạm
+                    
+                    print(f"📦 Đang tạo file zip TẠM THỜI: {zip_filename_tmp}")
+                    try:
+                        # 2. Ghi vào file TẠM
+                        with zipfile.ZipFile(zip_path_tmp, 'w') as zf:
+                            for filename, data in image_list: zf.writestr(filename, data)
+                        
+                        # 3. Đổi tên (thao tác nguyên tử)
+                        os.rename(zip_path_tmp, zip_path_final)
+                        print(f"✅ Đã hoàn thành và đổi tên file: {zip_filename_final}")
+                    
+                    except Exception as e:
+                        print(f"❌ Lỗi khi tạo file zip {zip_filename_tmp}: {e}")
+                        # Dọn dẹp file tạm nếu có lỗi
+                        if os.path.exists(zip_path_tmp):
+                            os.remove(zip_path_tmp)
             elif output_mode_domain == 'folder':
                 for mockup_name, image_list in images_for_domain.items():
                     now = datetime.now(pytz.timezone('Asia/Ho_Chi_Minh'))
