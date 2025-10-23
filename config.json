@@ -276,7 +276,7 @@
 					"pattern": "-Ornament-poster-black.jpg",
 					"action": "generate",
 					"mockup_sets_to_use": ["amertee"],
-					"coords": { "x": 172, "y": 118, "w": 502, "h": 748 }
+					"coords": { "x": 135, "y": 95, "w": 401, "h": 603 }
 				},
                 {
 					"pattern": "-Orament-X-mas-den.jpg",
