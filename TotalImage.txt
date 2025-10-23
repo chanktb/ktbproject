@@ -5,4 +5,4 @@ ktbimage.albumcoverprint: 1602
 ktbimage.amertee: 561
 ktbimage.ktbtee: 910
 ktbimage.printiment: 456
-ktbimage.whatwillwear: 1431
+ktbimage.whatwillwear: 1492
