@@ -782,6 +782,18 @@
 					"action": "generate",
 					"mockup_sets_to_use": ["ktbtee"],
 					"coords": { "x": 512, "y": 479, "w": 559, "h": 691 }
+				},
+                {
+					"pattern": "-t-shirt.webp",
+					"action": "skip",
+					"mockup_sets_to_use": ["ktbtee"],
+					"coords": { "x": 351, "y": 449, "w": 386, "h": 494 }
+				},
+                {
+					"pattern": "-Ladies.webp",
+					"action": "skip",
+					"mockup_sets_to_use": ["ktbtee"],
+					"coords": { "x": 638, "y": 764, "w": 560, "h": 628 }
 				}
             ]
         },
