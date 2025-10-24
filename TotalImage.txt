@@ -1,10 +1,10 @@
 Timestamp: 2025-10-24
 
-ktbimage.albumcoverprint: 1051
-ktbimage.amertee: 232
-ktbimage.ktbtee: 611
+ktbimage.albumcoverprint: 1063
+ktbimage.amertee: 262
+ktbimage.ktbtee: 738
 ktbimage.printiment: 311
-ktbimage.whatwillwear: 845
+ktbimage.whatwillwear: 914
 ktbimg.albumcoverprint: 71
 ktbimg.ktbtee: 61
 ktbimg.whatwillwear: 91
