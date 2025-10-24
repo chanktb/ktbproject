@@ -686,7 +686,7 @@
             ]
         },
         "mercuryshirt.com": {
-			"output_mode": "zip",
+			"output_mode": "folder",
             "rules": [
                 {
 					"pattern": "-shirt.jpg",
