@@ -796,7 +796,7 @@
 				},
                 {
 					"pattern": "-t-shirt.webp",
-					"action": "skip",
+					"action": "generate",
 					"mockup_sets_to_use": ["ktbtee"],
 					"coords": { "x": 351, "y": 449, "w": 386, "h": 494 }
 				},
