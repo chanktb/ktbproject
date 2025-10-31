@@ -143,6 +143,17 @@
             "watermark_text": "amertee.png",
             "title_prefix_to_add": "",
             "title_suffix_to_add": "Premium Shirt Sweater"
+        },
+        "vflippa": {
+            "white": [
+            { "file": "vflippa_white.jpg", "coords": { "x": 376, "y": 305, "w": 416, "h": 533 } }
+        ],
+            "black": [
+            { "file": "vflippa_black.jpg", "coords": { "x": 376, "y": 305, "w": 416, "h": 533 } }
+        ],
+            "watermark_text": "",
+            "title_prefix_to_add": "",
+            "title_suffix_to_add": "TShirt Hoodie"
         }
     },
     "domains": {
@@ -151,37 +162,37 @@
                 { 
 					"pattern": "-Posters-black.jpg",
 					"action": "generate",
-					"mockup_sets_to_use": ["whatwillwear", "albumcoverprint"],
+					"mockup_sets_to_use": ["whatwillwear", "vflippa"],
 					"coords": { "x": 148, "y": 54, "w": 341, "h": 460 }
 				},
                 {
 					"pattern": "-Posters-white.jpg",
 					"action": "generate",
-					"mockup_sets_to_use": ["whatwillwear", "albumcoverprint"],
+					"mockup_sets_to_use": ["whatwillwear", "vflippa"],
 					"coords": { "x": 163, "y": 29, "w": 281, "h": 386 }
 				},
                 {
 					"pattern": "-white-poster.jpg",
 					"action": "generate",
-					"mockup_sets_to_use": ["whatwillwear", "albumcoverprint"],
+					"mockup_sets_to_use": ["whatwillwear", "vflippa"],
 					"coords": { "x": 409, "y": 206, "w": 970, "h": 1384 }
 				},
                 {
 					"pattern": "-poster.jpg",
 					"action": "generate",
-					"mockup_sets_to_use": ["whatwillwear", "albumcoverprint"],
+					"mockup_sets_to_use": ["whatwillwear", "vflippa"],
 					"coords": { "x": 399, "y": 180, "w": 980, "h": 1405 }
 				},
                 {
 					"pattern": "-Mug-and-Ornament.jpg",
 					"action": "skip",
-					"mockup_sets_to_use": ["whatwillwear", "albumcoverprint"],
+					"mockup_sets_to_use": ["whatwillwear", "vflippa"],
 					"coords": { "x": 285, "y": 734, "w": 374, "h": 512 }
 				},
                 {
 					"pattern": "-White-Ornaments.jpg",
 					"action": "generate",
-					"mockup_sets_to_use": ["whatwillwear", "albumcoverprint"],
+					"mockup_sets_to_use": ["whatwillwear", "vflippa"],
 					"coords": { "x": 352, "y": 330, "w": 523, "h": 506 }
 				},
                 {
@@ -191,13 +202,13 @@
                 {
 					"pattern": "-long-sleeve.jpg",
 					"action": "generate",
-					"mockup_sets_to_use": ["whatwillwear", "albumcoverprint"],
+					"mockup_sets_to_use": ["whatwillwear", "vflippa"],
 					"coords": { "x": 643, "y": 889, "w": 707, "h": 982 }
 				},
                 {
 					"pattern": "-white-shirt.jpg",
 					"action": "generate",
-					"mockup_sets_to_use": ["whatwillwear", "albumcoverprint"],
+					"mockup_sets_to_use": ["whatwillwear", "vflippa"],
 					"coords": { "x": 275, "y": 536, "w": 416, "h": 502 }
 				}
             ]
@@ -208,25 +219,25 @@
                 {
 					"pattern": "-T-Shirt.jpg",
 					"action": "skip",
-					"mockup_sets_to_use": ["whatwillwear"],
+					"mockup_sets_to_use": ["vflippa"],
 					"coords": { "x": 204, "y": 196, "w": 432, "h": 504 }
 				},
 				{
 					"pattern": "-T-shirt.jpg",
 					"action": "generate",
-					"mockup_sets_to_use": ["whatwillwear"],
+					"mockup_sets_to_use": ["vflippa"],
 					"coords": { "x": 164, "y": 143, "w": 315, "h": 403 }
 				},
 				{
 					"pattern": "-circle.jpg",
 					"action": "generate",
-					"mockup_sets_to_use": ["whatwillwear"],
+					"mockup_sets_to_use": ["vflippa"],
 					"coords": { "x": 185, "y": 171, "w": 428, "h": 485 }
 				},
 				{
 					"pattern": "-poster.jpg",
 					"action": "generate",
-					"mockup_sets_to_use": ["whatwillwear"],
+					"mockup_sets_to_use": ["vflippa"],
 					"coords_white": { "x": 231, "y": 161, "w": 333, "h": 473 },
 					"coords_black": { "x": 320, "y": 173, "w": 336, "h": 446 },
 					"color_sample_coords": { "x": 554, "y": 162, "w": 10, "h": 5 }
@@ -357,7 +368,7 @@
                 {
 					"pattern": "-Shirt.jpg",
 					"action": "generate",
-					"mockup_sets_to_use": ["ktbtee"],
+					"mockup_sets_to_use": ["vflippa"],
 					"coords": { "x": 248, "y": 183, "w": 426, "h": 498 }
 				}
             ]
@@ -563,27 +574,27 @@
                 {
 					"pattern": "-t-shirt.jpg",
 					"action": "generate",
-					"mockup_sets_to_use": ["printiment"],
+					"mockup_sets_to_use": ["vflippa"],
 					"coords": { "x": 121, "y": 232, "w": 435, "h": 479 },
 					"erase_zones": [{ "x": 526, "y": 223, "w": 52, "h": 186 }]
 				},
                 {
 					"pattern": "-shirt.jpg",
 					"action": "generate",
-					"mockup_sets_to_use": ["printiment"],
-					"coords": { "x": 330, "y": 356, "w": 385, "h": 534 }
+					"mockup_sets_to_use": ["vflippa"],
+					"coords": { "x": 281, "y": 225, "w": 479, "h": 610 }
 				},
 				{
 					"pattern": "-shirtblack.jpg",
 					"action": "skip",
-					"mockup_sets_to_use": ["printiment"],
+					"mockup_sets_to_use": ["vflippa"],
 					"coords": { "x": 320, "y": 356, "w": 388, "h": 503 },
 					"skipBlack": true
 				},
                 {
 					"pattern": "-sweater.jpg",
 					"action": "generate",
-					"mockup_sets_to_use": ["printiment"],
+					"mockup_sets_to_use": ["vflippa"],
 					"coords": { "x": 98, "y": 268, "w": 401, "h": 431 }
 				}
             ]
