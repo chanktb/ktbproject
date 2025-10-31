@@ -88,7 +88,7 @@
             { "file": "printiment_black.jpg", "coords": { "x": 441, "y": 340, "w": 361, "h": 446 } },
             { "file": "printiment_black_1.jpg", "coords": { "x": 309, "y": 256, "w": 386, "h": 445 } }
         ],
-            "watermark_text": "printiment.png",
+            "watermark_text": "",
             "title_prefix_to_add": "",
             "title_suffix_to_add": "Tshirts Sweater Hoodie"
         },
@@ -101,7 +101,7 @@
             { "file": "whatwillwear_black.jpg", "coords": { "x": 309, "y": 256, "w": 386, "h": 445 } },
             { "file": "whatwillwear_black_1.jpg", "coords": { "x": 376, "y": 305, "w": 416, "h": 533 } }
         ],
-            "watermark_text": "whatwillwear.png",
+            "watermark_text": "",
             "title_prefix_to_add": "",
             "title_suffix_to_add": "Shirts"
         },
@@ -114,7 +114,7 @@
             { "file": "ktbtee_black.webp", "coords": { "x": 362, "y": 254, "w": 424, "h": 582 } },
             { "file": "ktbtee_black_1.jpg", "coords": { "x": 358, "y": 240, "w": 469, "h": 583 } }
         ],
-            "watermark_text": "ktbtee.png",
+            "watermark_text": "",
             "title_prefix_to_add": "Official",
             "title_suffix_to_add": "Tshirt Sweatshirt"
         },
@@ -127,7 +127,7 @@
             { "file": "albumcoverprint_black.jpg", "coords": { "x": 358, "y": 240, "w": 469, "h": 583 } },
             { "file": "albumcoverprint_black_1.jpg", "coords": { "x": 378, "y": 278, "w": 413, "h": 525 } }
         ],
-            "watermark_text": "albumcoverprint.png",
+            "watermark_text": "",
             "title_prefix_to_add": "Original",
             "title_suffix_to_add": "T Shirt Sweater"
         },
@@ -140,7 +140,7 @@
             { "file": "amertee_black.jpg", "coords": { "x": 373, "y": 240, "w": 447, "h": 601 } },
             { "file": "amertee_black_1.jpg", "coords": { "x": 395, "y": 291, "w": 378, "h": 508 } }
         ],
-            "watermark_text": "amertee.png",
+            "watermark_text": "",
             "title_prefix_to_add": "",
             "title_suffix_to_add": "Premium Shirt Sweater"
         },
@@ -502,12 +502,11 @@
             "rules": [
                 {
 					"pattern": "-mug.jpg",
-					"action": "generate",
+					"action": "skip",
 					"mockup_sets_to_use": ["amertee"],
-					"coords_white": { "x": 208, "y": 36, "w": 421, "h": 573 },
-					"coords_black": { "x": 315, "y": 176, "w": 329, "h": 393 },
-					"erase_zones": [{ "x": 185, "y": 381, "w": 39, "h": 87 }],
-					"color_sample_coords": { "x": 455, "y": 583, "w": 45, "h": 20 }
+					"coords_white": { "x": 135, "y": 21, "w": 237, "h": 342 },
+					"coords_black": { "x": 190, "y": 102, "w": 204, "h": 237 },
+					"color_sample_coords": { "x": 283, "y": 356, "w": 9, "h": 3 }
 				},
                 {
 					"pattern": "-Longsleeve-Shirt.jpg",
