@@ -498,11 +498,11 @@
             ]
         },
         "dalatshirt.com": {
-			"output_mode": "zip",
+			"output_mode": "folder",
             "rules": [
                 {
 					"pattern": "-mug.jpg",
-					"action": "skip",
+					"action": "generate",
 					"mockup_sets_to_use": ["amertee"],
 					"coords_white": { "x": 135, "y": 21, "w": 237, "h": 342 },
 					"coords_black": { "x": 190, "y": 102, "w": 204, "h": 237 },
@@ -768,6 +768,7 @@
             ]
         },
         "wildfoxtee.com": {
+			"output_mode": "folder",
             "rules": [
                 {
 					"pattern": "-hoodie.jpg",
@@ -801,7 +802,7 @@
 				},
                 {
 					"pattern": "-Ladies.webp",
-					"action": "skip",
+					"action": "generate",
 					"mockup_sets_to_use": ["ktbtee"],
 					"coords": { "x": 638, "y": 764, "w": 560, "h": 628 }
 				}
