@@ -521,7 +521,7 @@
 					"pattern": "-Shirt.jpg",
 					"action": "generate",
 					"mockup_sets_to_use": ["amertee"],
-					"coords": { "x": 404, "y": 146, "w": 319, "h": 405 }
+					"coords": { "x": 405, "y": 151, "w": 320, "h": 400 }
 				}
             ]
         },
