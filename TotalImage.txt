@@ -1,7 +1,8 @@
 Timestamp: 2025-11-11
 
 ktbcreator.whatwillwear: 15
-ktbimage.albumcoverprint: 311
+ktbimage.albumcoverprint: 348
+ktbimage.amertee: 38
 ktbimage.ktbtee: 116
 ktbimage.vflippa: 402
 ktbimage.whatwillwear: 806
