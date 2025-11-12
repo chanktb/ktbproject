@@ -503,7 +503,7 @@
                 {
 					"pattern": "-mug.jpg",
 					"action": "generate",
-					"mockup_sets_to_use": ["amertee"],
+					"mockup_sets_to_use": ["whatwillwear"],
 					"coords_white": { "x": 135, "y": 21, "w": 237, "h": 342 },
 					"coords_black": { "x": 190, "y": 102, "w": 204, "h": 237 },
 					"color_sample_coords": { "x": 283, "y": 356, "w": 9, "h": 3 }
@@ -511,7 +511,7 @@
                 {
 					"pattern": "-Longsleeve-Shirt.jpg",
 					"action": "skip",
-					"mockup_sets_to_use": ["amertee"],
+					"mockup_sets_to_use": ["whatwillwear"],
 					"coords_white": { "x": 292, "y": 479, "w": 377, "h": 503 },
 					"coords_black": { "x": 309, "y": 536, "w": 362, "h": 433 },
 					"erase_zones": [{ "x": 230, "y": 581, "w": 98, "h": 62 }, { "x": 191, "y": 617, "w": 152, "h": 40 }],
@@ -520,7 +520,7 @@
                 {
 					"pattern": "-Shirt.jpg",
 					"action": "generate",
-					"mockup_sets_to_use": ["amertee"],
+					"mockup_sets_to_use": ["whatwillwear"],
 					"coords": { "x": 405, "y": 151, "w": 320, "h": 400 }
 				},
                 {
