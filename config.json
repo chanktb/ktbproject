@@ -17,6 +17,8 @@
 			"Orament-Christmas-den",
             "Ornament-X-Mas-2024",
             "Ornament-poster-black",
+			"Ornament-Circle-Black-Ornament",
+			"Ornament-Circle-White-Ornament",
             "Orament-X-mas",
             "Mug-and-Ornament",
 			"Longsleeve-Shirt",
@@ -478,6 +480,18 @@
 					"action": "generate",
 					"mockup_sets_to_use": ["albumcoverprint"],
 					"coords": { "x": 301, "y": 149, "w": 375, "h": 492 }
+				},
+                {
+					"pattern": "-Ornament-Circle-Black-Ornament.jpg",
+					"action": "generate",
+					"mockup_sets_to_use": ["whatwillwear"],
+					"coords": { "x": 338, "y": 406, "w": 360, "h": 408 }
+				},
+                {
+					"pattern": "-Ornament-Circle-White-Ornament.jpg",
+					"action": "generate",
+					"mockup_sets_to_use": ["whatwillwear"],
+					"coords": { "x": 338, "y": 406, "w": 360, "h": 408 }
 				}
             ]
         },
