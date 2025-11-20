@@ -1,6 +1,6 @@
 Timestamp: 2025-11-20
 
-ktbimage.albumcoverprint: 119
+ktbimage.albumcoverprint: 204
 ktbimage.amertee: 64
 ktbimage.ktbtee: 110
 ktbimage.vflippa: 35
