@@ -390,7 +390,7 @@
 					"coords": { "x": 321, "y": 293, "w": 382, "h": 487 }
 				},
                 {
-					"pattern": "-sweater.webp",
+					"pattern": "-ornament-ornament.webp",
 					"action": "generate",
 					"mockup_sets_to_use": ["whatwillwear"],
 					"coords_white": { "x": 258, "y": 347, "w": 476, "h": 574 },
