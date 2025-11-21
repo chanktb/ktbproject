@@ -388,6 +388,14 @@
 					"action": "generate",
 					"mockup_sets_to_use": ["whatwillwear"],
 					"coords": { "x": 321, "y": 293, "w": 382, "h": 487 }
+				},
+                {
+					"pattern": "-sweater.webp",
+					"action": "generate",
+					"mockup_sets_to_use": ["whatwillwear"],
+					"coords_white": { "x": 258, "y": 347, "w": 476, "h": 574 },
+					"coords_black": { "x": 235, "y": 437, "w": 532, "h": 547 },
+					"color_sample_coords": { "x": 457, "y": 320, "w": 15, "h": 12 }
 				}
             ]
         },
