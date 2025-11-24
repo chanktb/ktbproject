@@ -376,6 +376,7 @@
             ]
         },
         "nowbestshirt.com": {
+			"output_mode": "folder",
             "rules": [
                 {
 					"pattern": "-sweater.jpg",
@@ -396,6 +397,13 @@
 					"coords_white": { "x": 258, "y": 347, "w": 476, "h": 574 },
 					"coords_black": { "x": 235, "y": 437, "w": 532, "h": 547 },
 					"color_sample_coords": { "x": 457, "y": 320, "w": 15, "h": 12 }
+				},
+                {
+					"pattern": "-ornament-ornament.jpg",
+					"action": "generate",
+					"mockup_sets_to_use": ["whatwillwear"],
+					"coords": { "x": 253, "y": 430, "w": 481, "h": 585 },
+					"angle": -12
 				}
             ]
         },
@@ -547,6 +555,12 @@
 				},
                 {
 					"pattern": "-black-shirt.jpg",
+					"action": "generate",
+					"mockup_sets_to_use": ["whatwillwear"],
+					"coords": { "x": 247, "y": 167, "w": 413, "h": 489 }
+				},
+                {
+					"pattern": "-white-shirt.jpg",
 					"action": "generate",
 					"mockup_sets_to_use": ["whatwillwear"],
 					"coords": { "x": 247, "y": 167, "w": 413, "h": 489 }
