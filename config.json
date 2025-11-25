@@ -404,6 +404,13 @@
 					"mockup_sets_to_use": ["whatwillwear"],
 					"coords": { "x": 253, "y": 430, "w": 481, "h": 585 },
 					"angle": -12
+				},
+                {
+					"pattern": "-Ornament-ornament.jpg",
+					"action": "generate",
+					"mockup_sets_to_use": ["whatwillwear"],
+					"coords": { "x": 258, "y": 334, "w": 471, "h": 595 },
+					"angle": 2
 				}
             ]
         },
