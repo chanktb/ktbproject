@@ -495,25 +495,25 @@
                 {
 					"pattern": "-Long-Sleve.jpg",
 					"action": "generate",
-					"mockup_sets_to_use": ["albumcoverprint"],
+					"mockup_sets_to_use": ["vflippa"],
 					"coords": { "x": 281, "y": 147, "w": 399, "h": 520 }
 				},
                 {
 					"pattern": "-Ladies.jpg",
 					"action": "generate",
-					"mockup_sets_to_use": ["albumcoverprint"],
+					"mockup_sets_to_use": ["vflippa"],
 					"coords": { "x": 301, "y": 149, "w": 375, "h": 492 }
 				},
                 {
 					"pattern": "-Ornament-Circle-Black-Ornament.jpg",
 					"action": "generate",
-					"mockup_sets_to_use": ["whatwillwear"],
+					"mockup_sets_to_use": ["vflippa"],
 					"coords": { "x": 338, "y": 406, "w": 360, "h": 408 }
 				},
                 {
 					"pattern": "-Ornament-Circle-White-Ornament.jpg",
 					"action": "generate",
-					"mockup_sets_to_use": ["whatwillwear"],
+					"mockup_sets_to_use": ["vflippa"],
 					"coords": { "x": 338, "y": 406, "w": 360, "h": 408 }
 				}
             ]
@@ -783,7 +783,7 @@
                 {
 					"pattern": "-Ceramic-Ornament-Ceramic-Mug-Poster-and-Classic-Dad-Cap.jpg",
 					"action": "generate",
-					"mockup_sets_to_use": ["albumcoverprint"],
+					"mockup_sets_to_use": ["vflippa"],
 					"coords_white": { "x": 117, "y": 741, "w": 286, "h": 449 },
 					"coords_black": { "x": 102, "y": 753, "w": 315, "h": 434 },
 					"color_sample_coords": { "x": 758, "y": 1056, "w": 36, "h": 22 }
@@ -798,7 +798,7 @@
                 {
 					"pattern": "-ornament-ornament-white.jpg",
 					"action": "generate",
-					"mockup_sets_to_use": ["albumcoverprint"],
+					"mockup_sets_to_use": ["vflippa"],
 					"coords": { "x": 255, "y": 294, "w": 481, "h": 599 },
 					"color_sample_coords": { "x": 375, "y": 250, "w": 55, "h": 21 }
 				}
