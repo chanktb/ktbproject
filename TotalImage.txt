@@ -3,5 +3,5 @@ Timestamp: 2025-11-26
 ktbimage.albumcoverprint: 240
 ktbimage.amertee: 104
 ktbimage.ktbtee: 167
-ktbimage.vflippa: 642
-ktbimage.whatwillwear: 1916
+ktbimage.vflippa: 748
+ktbimage.whatwillwear: 2060
