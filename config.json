@@ -603,6 +603,12 @@
 					"coords_white": { "x": 301, "y": 595, "w": 437, "h": 552 },
 					"coords_black": { "x": 231, "y": 455, "w": 497, "h": 562 },
 					"color_sample_coords": { "x": 477, "y": 1195, "w": 65, "h": 18 }
+				},
+                {
+					"pattern": "-Ornament-Ornament.jpg",
+					"action": "generate",
+					"mockup_sets_to_use": ["vflippa"],
+					"coords_white": { "x": 301, "y": 336, "w": 424, "h": 506 }
 				}
             ]
         },
