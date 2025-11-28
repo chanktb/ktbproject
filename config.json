@@ -341,7 +341,9 @@
 					"pattern": "-Ornament.jpg",
 					"action": "generate",
 					"mockup_sets_to_use": ["whatwillwear"],
-					"coords": { "x": 207, "y": 210, "w": 358, "h": 338 }
+					"coords_white": { "x": 289, "y": 259, "w": 453, "h": 510 },
+					"coords_black": { "x": 223, "y": 191, "w": 315, "h": 389 },
+					"color_sample_coords": { "x": 587, "y": 240, "w": 9, "h": 9 }
 				},
                 {
 					"pattern": "-T-shirt-Black.jpg",
