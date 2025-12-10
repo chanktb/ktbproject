@@ -378,7 +378,7 @@
             ]
         },
         "nowbestshirt.com": {
-			"output_mode": "folder",
+			"output_mode": "zip",
             "rules": [
                 {
 					"pattern": "-sweater.jpg",
@@ -537,7 +537,7 @@
             ]
         },
         "dalatshirt.com": {
-			"output_mode": "folder",
+			"output_mode": "zip",
             "rules": [
                 {
 					"pattern": "-mug.jpg",
@@ -761,7 +761,7 @@
             ]
         },
         "mercuryshirt.com": {
-			"output_mode": "folder",
+			"output_mode": "zip",
             "rules": [
                 {
 					"pattern": "-shirt.jpg",
@@ -833,7 +833,7 @@
             ]
         },
         "wildfoxtee.com": {
-			"output_mode": "folder",
+			"output_mode": "zip",
             "rules": [
                 {
 					"pattern": "-hoodie.jpg",
