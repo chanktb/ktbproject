@@ -383,19 +383,19 @@
                 {
 					"pattern": "-sweater.jpg",
 					"action": "generate",
-					"mockup_sets_to_use": ["vflippa"],
+					"mockup_sets_to_use": ["whatwillwear"],
 					"coords": { "x": 321, "y": 293, "w": 382, "h": 487 }
 				},
                 {
 					"pattern": "-sweater.webp",
 					"action": "generate",
-					"mockup_sets_to_use": ["vflippa"],
+					"mockup_sets_to_use": ["whatwillwear"],
 					"coords": { "x": 321, "y": 293, "w": 382, "h": 487 }
 				},
                 {
 					"pattern": "-ornament-ornament.webp",
 					"action": "generate",
-					"mockup_sets_to_use": ["vflippa"],
+					"mockup_sets_to_use": ["whatwillwear"],
 					"coords_white": { "x": 258, "y": 347, "w": 476, "h": 574 },
 					"coords_black": { "x": 235, "y": 437, "w": 532, "h": 547 },
 					"color_sample_coords": { "x": 457, "y": 320, "w": 15, "h": 12 }
@@ -403,14 +403,14 @@
                 {
 					"pattern": "-ornament-ornament.jpg",
 					"action": "generate",
-					"mockup_sets_to_use": ["vflippa"],
+					"mockup_sets_to_use": ["whatwillwear"],
 					"coords": { "x": 253, "y": 430, "w": 481, "h": 585 },
 					"angle": -12
 				},
                 {
 					"pattern": "-Ornament-ornament.jpg",
 					"action": "generate",
-					"mockup_sets_to_use": ["vflippa"],
+					"mockup_sets_to_use": ["whatwillwear"],
 					"coords": { "x": 258, "y": 334, "w": 471, "h": 595 },
 					"angle": 2
 				}
@@ -422,13 +422,13 @@
                 {
 					"pattern": "-sweaterold.webp",
 					"action": "skip",
-					"mockup_sets_to_use": ["amertee"],
+					"mockup_sets_to_use": ["whatwillwear"],
 					"coords": { "x": 287, "y": 246, "w": 421, "h": 494 }
 				},
 				{
 					"pattern": "-sweater.webp",
 					"action": "skip",
-					"mockup_sets_to_use": ["vflippa"],
+					"mockup_sets_to_use": ["whatwillwear"],
 					"coords_white": { "x": 456, "y": 495, "w": 481, "h": 509 },
 					"coords_black": { "x": 439, "y": 489, "w": 398, "h": 496 },
 					"color_sample_coords": { "x": 311, "y": 610, "w": 17, "h": 38 },
@@ -437,7 +437,7 @@
                 {
 					"pattern": "-ornament.webp",
 					"action": "generate",
-					"mockup_sets_to_use": ["vflippa"],
+					"mockup_sets_to_use": ["whatwillwear"],
 					"coords": { "x": 232, "y": 196, "w": 571, "h": 619 }
 				}
             ]
