@@ -493,6 +493,7 @@
             ]
         },
         "legendusashirt.com": {
+			"output_mode": "folder",
             "rules": [
                 {
 					"pattern": "-Long-Sleve.jpg",
@@ -537,7 +538,7 @@
             ]
         },
         "dalatshirt.com": {
-			"output_mode": "zip",
+			"output_mode": "folder",
             "rules": [
                 {
 					"pattern": "-mug.jpg",
