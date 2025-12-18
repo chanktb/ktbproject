@@ -580,7 +580,7 @@
 					"pattern": "-t-shirt.jpg",
 					"action": "generate",
 					"mockup_sets_to_use": ["whatwillwear"],
-					"coords_white": { "x": 375, "y": 538, "w": 308, "h": 382 },
+					"coords_white": { "x": 320, "y": 680, "w": 385, "h": 451 },
 					"coords_black": { "x": 288, "y": 571, "w": 399, "h": 518 },
 					"color_sample_coords": { "x": 543, "y": 1097, "w": 49, "h": 14 }
 				}
