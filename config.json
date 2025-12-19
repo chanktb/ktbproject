@@ -417,23 +417,14 @@
 				}
             ]
         },
-        "capitoneshirt.com": {
-			"output_mode": "zip",
+        "hoopoetees.com": {
+			"output_mode": "folder",
             "rules": [
                 {
-					"pattern": "-sweaterold.webp",
-					"action": "skip",
+					"pattern": "-ladies-tee.webp",
+					"action": "generate",
 					"mockup_sets_to_use": ["whatwillwear"],
-					"coords": { "x": 287, "y": 246, "w": 421, "h": 494 }
-				},
-				{
-					"pattern": "-sweater.webp",
-					"action": "skip",
-					"mockup_sets_to_use": ["whatwillwear"],
-					"coords_white": { "x": 456, "y": 495, "w": 481, "h": 509 },
-					"coords_black": { "x": 439, "y": 489, "w": 398, "h": 496 },
-					"color_sample_coords": { "x": 311, "y": 610, "w": 17, "h": 38 },
-					"angle": -4
+					"coords": { "x": 309, "y": 174, "w": 389, "h": 458 }
 				},
                 {
 					"pattern": "-ornament.webp",
