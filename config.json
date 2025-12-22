@@ -438,6 +438,18 @@
 			"output_mode": "folder",
             "rules": [
                 {
+					"pattern": "-womens-t-shirt-white.jpg",
+					"action": "skip",
+					"mockup_sets_to_use": ["vflippa"],
+					"coords": { "x": 320, "y": 259, "w": 374, "h": 475 }
+				},
+				{
+					"pattern": "-womens-t-shirt-black.jpg",
+					"action": "skip",
+					"mockup_sets_to_use": ["vflippa"],
+					"coords": { "x": 320, "y": 259, "w": 374, "h": 475 }
+				},
+				{
 					"pattern": "-t-shirt-white.jpg",
 					"action": "generate",
 					"mockup_sets_to_use": ["vflippa"],
