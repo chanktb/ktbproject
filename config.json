@@ -336,7 +336,7 @@
             ]
         },
         "teeextra.com": {
-			"output_mode": "folder",
+			"output_mode": "zip",
             "rules": [
                 {
 					"pattern": "-Ornament.jpg",
@@ -418,7 +418,7 @@
             ]
         },
         "hoopoetees.com": {
-			"output_mode": "folder",
+			"output_mode": "zip",
             "rules": [
                 {
 					"pattern": "-ladies-tee.webp",
@@ -435,7 +435,7 @@
             ]
         },
         "clickoneshirt.com": {
-			"output_mode": "folder",
+			"output_mode": "zip",
             "rules": [
                 {
 					"pattern": "-womens-t-shirt-white.jpg",
@@ -498,7 +498,7 @@
             ]
         },
         "legendusashirt.com": {
-			"output_mode": "folder",
+			"output_mode": "zip",
             "rules": [
                 {
 					"pattern": "-Long-Sleve.jpg",
@@ -543,7 +543,7 @@
             ]
         },
         "dalatshirt.com": {
-			"output_mode": "folder",
+			"output_mode": "zip",
             "rules": [
                 {
 					"pattern": "-mug.jpg",
@@ -839,7 +839,7 @@
             ]
         },
         "schmidtstee.com": {
-			"output_mode": "folder",
+			"output_mode": "zip",
             "rules": [
                 {
 					"pattern": "-hoodie.jpg",
