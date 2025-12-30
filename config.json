@@ -431,6 +431,12 @@
 					"action": "generate",
 					"mockup_sets_to_use": ["whatwillwear"],
 					"coords": { "x": 232, "y": 196, "w": 571, "h": 619 }
+				},
+                {
+					"pattern": "-shirt.webp",
+					"action": "generate",
+					"mockup_sets_to_use": ["whatwillwear"],
+					"coords": { "x": 272, "y": 107, "w": 460, "h": 587 }
 				}
             ]
         },
