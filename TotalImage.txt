@@ -1,5 +1,5 @@
 Timestamp: 2026-01-07
 
-ktbimage.albumcoverprint: 78
-ktbimage.vflippa: 316
+ktbimage.albumcoverprint: 90
+ktbimage.vflippa: 348
 ktbimage.whatwillwear: 287
