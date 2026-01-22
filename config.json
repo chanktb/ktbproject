@@ -710,7 +710,7 @@
             "rules": [
                 {
 					"pattern": "-sweater.webp",
-					"action": "generate",
+					"action": "skip",
 					"mockup_sets_to_use": ["vflippa"],
 					"coords": { "x": 319, "y": 214, "w": 370, "h": 405 },
 					"color_sample_coords": { "x": 295, "y": 884, "w": 17, "h": 15 },
@@ -721,9 +721,9 @@
 					"pattern": "-shirt.webp",
 					"action": "generate",
 					"mockup_sets_to_use": ["vflippa"],
-					"coords": { "x": 277, "y": 401, "w": 402, "h": 458 },
-					"erase_zones": [{ "x": 265, "y": 389, "w": 35, "h": 219 }, { "x": 637, "y": 771, "w": 76, "h": 126 }, { "x": 260, "y": 394, "w": 38, "h": 229 }],
-					"angle": 12
+					"coords_white": { "x": 286, "y": 652, "w": 415, "h": 467 },
+					"coords_black": { "x": 300, "y": 769, "w": 399, "h": 437 },
+					"color_sample_coords": { "x": 411, "y": 1220, "w": 26, "h": 14 }
 				}
             ]
         },
