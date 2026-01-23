@@ -361,10 +361,10 @@
 					"angle": 3
 				},
                 {
-					"pattern": "-Shirt.jpg",
+					"pattern": "-T-shirt.jpg",
 					"action": "generate",
 					"mockup_sets_to_use": ["whatwillwear"],
-					"coords": { "x": 264, "y": 215, "w": 479, "h": 594 }
+					"coords": { "x": 262, "y": 253, "w": 574, "h": 657 }
 				}
             ]
         },
@@ -480,10 +480,10 @@
         "teeslocal.com": {
             "rules": [
                 {
-					"pattern": "-T-Shirt.jpg",
+					"pattern": "-T-shirt.jpg",
 					"action": "generate",
 					"mockup_sets_to_use": ["whatwillwear"],
-					"coords": { "x": 388, "y": 170, "w": 370, "h": 489 }
+					"coords": { "x": 337, "y": 169, "w": 455, "h": 568 }
 				}
             ]
         },
