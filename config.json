@@ -441,36 +441,20 @@
             ]
         },
         "clickoneshirt.com": {
-			"output_mode": "zip",
+			"output_mode": "folder",
             "rules": [
                 {
-					"pattern": "-womens-t-shirt-white.jpg",
-					"action": "skip",
-					"mockup_sets_to_use": ["vflippa"],
-					"coords": { "x": 320, "y": 259, "w": 374, "h": 475 }
-				},
-				{
-					"pattern": "-womens-t-shirt-black.jpg",
-					"action": "skip",
-					"mockup_sets_to_use": ["vflippa"],
-					"coords": { "x": 320, "y": 259, "w": 374, "h": 475 }
-				},
-				{
-					"pattern": "-t-shirt-white.jpg",
+					"pattern": "-Woman-T-shirt.jpg",
 					"action": "generate",
-					"mockup_sets_to_use": ["vflippa"],
-					"coords": { "x": 320, "y": 259, "w": 374, "h": 475 }
-				},
-                {
-					"pattern": "-t-shirt-black.jpg",
-					"action": "generate",
-					"mockup_sets_to_use": ["vflippa"],
-					"coords": { "x": 311, "y": 241, "w": 450, "h": 566 }
+					"mockup_sets_to_use": ["whatwillwear"],
+					"coords_white": { "x": 303, "y": 219, "w": 434, "h": 544 },
+					"coords_black": { "x": 386, "y": 207, "w": 413, "h": 475 },
+					"color_sample_coords": { "x": 546, "y": 141, "w": 17, "h": 9 }
 				},
                 {
 					"pattern": "-Ornament.jpg",
 					"action": "generate",
-					"mockup_sets_to_use": ["vflippa"],
+					"mockup_sets_to_use": ["whatwillwear"],
 					"coords_white": { "x": 291, "y": 277, "w": 411, "h": 481 },
 					"coords_black": { "x": 320, "y": 256, "w": 386, "h": 504 },
 					"color_sample_coords": { "x": 200, "y": 461, "w": 27, "h": 30 }
