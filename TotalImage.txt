@@ -1,3 +1,4 @@
 Timestamp: 2026-02-01
 
-ktbimage.albumcoverprint: 37
+ktbimage.albumcoverprint: 40
+ktbimage.whatwillwear: 26
