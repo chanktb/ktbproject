@@ -228,7 +228,7 @@
 					"pattern": "-T-shirt.jpg",
 					"action": "generate",
 					"mockup_sets_to_use": ["vflippa"],
-					"coords": { "x": 164, "y": 143, "w": 315, "h": 403 }
+					"coords": { "x": 167, "y": 145, "w": 311, "h": 390 }
 				},
 				{
 					"pattern": "-circle.jpg",
@@ -374,7 +374,7 @@
 					"pattern": "-Shirt.jpg",
 					"action": "generate",
 					"mockup_sets_to_use": ["vflippa"],
-					"coords": { "x": 248, "y": 183, "w": 426, "h": 498 }
+					"coords": { "x": 261, "y": 182, "w": 384, "h": 499 }
 				}
             ]
         },
