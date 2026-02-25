@@ -222,25 +222,25 @@
                 {
 					"pattern": "-T-Shirt.jpg",
 					"action": "skip",
-					"mockup_sets_to_use": ["vflippa"],
+					"mockup_sets_to_use": ["whatwillwear"],
 					"coords": { "x": 204, "y": 196, "w": 432, "h": 504 }
 				},
 				{
 					"pattern": "-T-shirt.jpg",
 					"action": "generate",
-					"mockup_sets_to_use": ["vflippa"],
+					"mockup_sets_to_use": ["whatwillwear"],
 					"coords": { "x": 167, "y": 145, "w": 311, "h": 390 }
 				},
 				{
 					"pattern": "-circle.jpg",
 					"action": "generate",
-					"mockup_sets_to_use": ["vflippa"],
+					"mockup_sets_to_use": ["whatwillwear"],
 					"coords": { "x": 185, "y": 171, "w": 428, "h": 485 }
 				},
 				{
 					"pattern": "-poster.jpg",
 					"action": "generate",
-					"mockup_sets_to_use": ["vflippa"],
+					"mockup_sets_to_use": ["whatwillwear"],
 					"coords_white": { "x": 231, "y": 161, "w": 333, "h": 473 },
 					"coords_black": { "x": 320, "y": 173, "w": 336, "h": 446 },
 					"color_sample_coords": { "x": 554, "y": 162, "w": 10, "h": 5 }
@@ -295,25 +295,25 @@
                 {
 					"pattern": "-Ornament-poster-black.jpg",
 					"action": "generate",
-					"mockup_sets_to_use": ["amertee"],
+					"mockup_sets_to_use": ["whatwillwear"],
 					"coords": { "x": 135, "y": 95, "w": 401, "h": 603 }
 				},
                 {
 					"pattern": "-Orament-X-mas-den.jpg",
 					"action": "generate",
-					"mockup_sets_to_use": ["amertee"],
+					"mockup_sets_to_use": ["whatwillwear"],
 					"coords": { "x": 252, "y": 320, "w": 440, "h": 514 }
 				},
                 {
 					"pattern": "-Orament-Christmas.jpg",
 					"action": "generate",
-					"mockup_sets_to_use": ["amertee"],
+					"mockup_sets_to_use": ["whatwillwear"],
 					"coords": { "x": 303, "y": 315, "w": 449, "h": 488 }
 				},
                 {
 					"pattern": "-v-neck-t-shirt.jpg",
 					"action": "generate",
-					"mockup_sets_to_use": ["amertee"],
+					"mockup_sets_to_use": ["whatwillwear"],
 					"coords": { "x": 293, "y": 237, "w": 359, "h": 431 },
 					"color_sample_coords": { "x": 792, "y": 812, "w": 28, "h": 25 },
 					"skipWhite": true
@@ -321,7 +321,7 @@
                 {
 					"pattern": "-T-shirt.jpg",
 					"action": "generate",
-					"mockup_sets_to_use": ["amertee"],
+					"mockup_sets_to_use": ["whatwillwear"],
 					"coords": { "x": 267, "y": 179, "w": 386, "h": 458 }
 				}
             ]
@@ -522,13 +522,13 @@
                 {
 					"pattern": "-men-shirt.webp",
 					"action": "generate",
-					"mockup_sets_to_use": ["albumcoverprint"],
+					"mockup_sets_to_use": ["whatwillwear"],
 					"coords": { "x": 220, "y": 120, "w": 321, "h": 435 }
 				},
                 {
 					"pattern": "-men-shirt.jpg",
 					"action": "generate",
-					"mockup_sets_to_use": ["albumcoverprint"],
+					"mockup_sets_to_use": ["whatwillwear"],
 					"coords": { "x": 220, "y": 120, "w": 321, "h": 435 }
 				}
             ]
@@ -586,19 +586,19 @@
                 {
 					"pattern": "-Ladies-tee.jpg",
 					"action": "generate",
-					"mockup_sets_to_use": ["vflippa"],
+					"mockup_sets_to_use": ["printiment"],
 					"coords": { "x": 341, "y": 155, "w": 366, "h": 443 }
 				},
                 {
 					"pattern": "-Sweater.jpg",
 					"action": "skip",
-					"mockup_sets_to_use": ["vflippa"],
+					"mockup_sets_to_use": ["printiment"],
 					"coords": { "x": 401, "y": 185, "w": 359, "h": 458 }
 				},
                 {
 					"pattern": "-Ladies.jpg",
 					"action": "generate",
-					"mockup_sets_to_use": ["vflippa"],
+					"mockup_sets_to_use": ["printiment"],
 					"coords_white": { "x": 317, "y": 206, "w": 364, "h": 460 },
 					"coords_black": { "x": 295, "y": 210, "w": 372, "h": 506 },
 					"color_sample_coords": { "x": 462, "y": 740, "w": 60, "h": 36 }
@@ -606,7 +606,7 @@
                 {
 					"pattern": "-Shirt.jpg",
 					"action": "generate",
-					"mockup_sets_to_use": ["vflippa"],
+					"mockup_sets_to_use": ["printiment"],
 					"coords_white": { "x": 301, "y": 595, "w": 437, "h": 552 },
 					"coords_black": { "x": 231, "y": 455, "w": 497, "h": 562 },
 					"color_sample_coords": { "x": 477, "y": 1195, "w": 65, "h": 18 }
@@ -614,7 +614,7 @@
                 {
 					"pattern": "-Ornament-Ornament.jpg",
 					"action": "generate",
-					"mockup_sets_to_use": ["vflippa"],
+					"mockup_sets_to_use": ["printiment"],
 					"coords_white": { "x": 301, "y": 336, "w": 424, "h": 506 }
 				}
             ]
@@ -635,27 +635,27 @@
                 {
 					"pattern": "-t-shirt.jpg",
 					"action": "generate",
-					"mockup_sets_to_use": ["vflippa"],
+					"mockup_sets_to_use": ["printiment"],
 					"coords": { "x": 121, "y": 232, "w": 435, "h": 479 },
 					"erase_zones": [{ "x": 526, "y": 223, "w": 52, "h": 186 }]
 				},
                 {
 					"pattern": "-shirt.jpg",
 					"action": "generate",
-					"mockup_sets_to_use": ["vflippa"],
+					"mockup_sets_to_use": ["printiment"],
 					"coords": { "x": 281, "y": 225, "w": 479, "h": 610 }
 				},
 				{
 					"pattern": "-shirtblack.jpg",
 					"action": "skip",
-					"mockup_sets_to_use": ["vflippa"],
+					"mockup_sets_to_use": ["printiment"],
 					"coords": { "x": 320, "y": 356, "w": 388, "h": 503 },
 					"skipBlack": true
 				},
                 {
 					"pattern": "-sweater.jpg",
 					"action": "generate",
-					"mockup_sets_to_use": ["vflippa"],
+					"mockup_sets_to_use": ["printiment"],
 					"coords": { "x": 98, "y": 268, "w": 401, "h": 431 }
 				}
             ]
@@ -696,7 +696,7 @@
                 {
 					"pattern": "-sweater.webp",
 					"action": "skip",
-					"mockup_sets_to_use": ["vflippa"],
+					"mockup_sets_to_use": ["printiment"],
 					"coords": { "x": 319, "y": 214, "w": 370, "h": 405 },
 					"color_sample_coords": { "x": 295, "y": 884, "w": 17, "h": 15 },
 					"angle": -3,
@@ -705,7 +705,7 @@
                 {
 					"pattern": "-shirt.webp",
 					"action": "generate",
-					"mockup_sets_to_use": ["vflippa"],
+					"mockup_sets_to_use": ["printiment"],
 					"coords_white": { "x": 286, "y": 652, "w": 415, "h": 467 },
 					"coords_black": { "x": 300, "y": 769, "w": 399, "h": 437 },
 					"color_sample_coords": { "x": 411, "y": 1220, "w": 26, "h": 14 }
@@ -717,7 +717,7 @@
                 {
 					"pattern": "-Shirt.webp",
 					"action": "generate",
-					"mockup_sets_to_use": ["ktbtee"],
+					"mockup_sets_to_use": ["whatwillwear"],
 					"coords": { "x": 274, "y": 173, "w": 447, "h": 523 }
 				}
             ]
@@ -728,7 +728,7 @@
                 {
 					"pattern": "-sweater.jpg",
 					"action": "skip",
-					"mockup_sets_to_use": ["ktbtee"],
+					"mockup_sets_to_use": ["whatwillwear"],
 					"coords_white": { "x": 139, "y": 160, "w": 433, "h": 579 },
 					"coords_black": { "x": 139, "y": 160, "w": 433, "h": 579 },
 					"color_sample_coords": { "x": 539, "y": 72, "w": 53, "h": 28 }
@@ -736,13 +736,13 @@
 				{
 					"pattern": "-sweaterold.jpg",
 					"action": "skip",
-					"mockup_sets_to_use": ["ktbtee"],
+					"mockup_sets_to_use": ["whatwillwear"],
 					"coords": { "x": 208, "y": 241, "w": 327, "h": 403 }
 				},
                 {
 					"pattern": "-ornament-Ornaments.jpg",
 					"action": "generate",
-					"mockup_sets_to_use": ["ktbtee"],
+					"mockup_sets_to_use": ["whatwillwear"],
 					"coords": { "x": 317, "y": 253, "w": 382, "h": 442 }
 				}
             ]
@@ -752,7 +752,7 @@
                 {
 					"pattern": "-t-shirt.jpg",
 					"action": "generate",
-					"mockup_sets_to_use": ["albumcoverprint"],
+					"mockup_sets_to_use": ["whatwillwear"],
 					"coords": { "x": 335, "y": 227, "w": 465, "h": 651 }
 				}
             ]
@@ -763,7 +763,7 @@
                 {
 					"pattern": "-shirt.jpg",
 					"action": "generate",
-					"mockup_sets_to_use": ["albumcoverprint"],
+					"mockup_sets_to_use": ["whatwillwear"],
 					"coords": { "x": 269, "y": 175, "w": 464, "h": 602 }
 				}
             ]
