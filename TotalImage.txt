@@ -1,5 +1,5 @@
 Timestamp: 2026-02-26
 
 ktbimage.printiment: 129
-ktbimage.vflippa: 29
-ktbimage.whatwillwear: 200
+ktbimage.vflippa: 47
+ktbimage.whatwillwear: 218
