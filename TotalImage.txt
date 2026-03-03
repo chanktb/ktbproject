@@ -1,4 +1,4 @@
 Timestamp: 2026-03-03
 
-ktbimage.vflippa: 390
-ktbimage.whatwillwear: 1095
+ktbimage.vflippa: 444
+ktbimage.whatwillwear: 1130
