@@ -232,6 +232,12 @@
 					"coords": { "x": 167, "y": 145, "w": 311, "h": 390 }
 				},
 				{
+					"pattern": "-T-shirt.webp",
+					"action": "generate",
+					"mockup_sets_to_use": ["whatwillwear"],
+					"coords": { "x": 167, "y": 145, "w": 311, "h": 390 }
+				},
+				{
 					"pattern": "-circle.jpg",
 					"action": "generate",
 					"mockup_sets_to_use": ["whatwillwear"],
