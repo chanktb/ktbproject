@@ -456,7 +456,7 @@
             ]
         },
         "clickoneshirt.com": {
-			"output_mode": "zip",
+			"output_mode": "folder",
             "rules": [
                 {
 					"pattern": "-Woman-T-shirt.jpg",
